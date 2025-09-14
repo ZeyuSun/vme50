@@ -1,85 +1,92 @@
-# Visual Cooking Assistant
+# VME50: Vision Means Everything in 50% Scenario
 
-A hackathon webapp that provides visual, audio-guided cooking instructions with AI-powered result analysis.
+**VME50** is an image-to-image search and interaction platform built for situations where text is too complex, urgent, or hard to describe. Instead of typing, users simply upload a picture and explore results directly through vision.
 
-## Features
+---
 
-- **Visual Recipe Steps**: Upload food images to get step-by-step visual cooking instructions
-- **Audio Guidance**: Click on any step to hear audio instructions (uses text-to-speech)
-- **Result Analysis**: Upload your finished dish to get a radar chart analysis comparing your result
-- **Mobile-Friendly**: Responsive design optimized for all devices
-- **No Text Required**: Designed for accessibility - minimal text, maximum visual/audio feedback
+## 🚀 Features
+- **Where to Find It** – Identify the object or scene in an image and locate it (e.g., landmarks, products, places).  
+- **How to Make It** – Break down the image into components with step-by-step visual instructions.  
+- **Audio Guidance** – Each step includes an audio button with text-to-speech playback for accessibility.  
+- **Vision Alignment Score** – Upload your own recreation photo and get a similarity score compared to the original.  
+- **Social Sharing** – Share your results and scores for fun, competition, or collaboration.  
+- **Accessible Design** – Minimal typing required, optimized for users who prefer to show rather than tell.  
 
-## How to Use
+---
 
-### 1. Get Cooking Instructions
-- Upload a food image or click on sample images (Pizza, Coffee, Sandwich)
-- View visual step-by-step instructions
-- Click on any step card to hear audio instructions
+## 🥇 How to Use
+1. **Upload an Image**  
+   - Choose your own picture or a sample image (e.g., landmark, food, object).  
+   - Click **“Where to Find It”** to identify what and where it is.  
 
-### 2. Analyze Your Results
-- After cooking, upload a photo of your finished dish
-- Get instant analysis with radar chart showing scores for:
-  - Color
-  - Texture
-  - Ingredients
-  - Presentation
-  - Portion
-- Click "Hear Feedback" for audio analysis
+2. **Learn How to Recreate It**  
+   - Click **“How to Make It”** to view visual step-by-step instructions.  
+   - Play audio guidance for hands-free accessibility.  
 
-## Demo Flow
+3. **Recreate and Compare**  
+   - Upload your version (e.g., a dish, DIY item, or Lego model).  
+   - Receive a **vision alignment score** with radar-style analysis.  
+   - Share the score with friends or on social media.  
 
-1. **Start**: Click on Pizza sample image
-2. **Steps**: Click through cooking steps to hear instructions
-3. **Cook**: (Simulate cooking the dish)
-4. **Upload Result**: Click "Upload Your Result" and try sample results
-5. **Analysis**: View radar chart and click "Hear Feedback"
+---
 
-## Technical Features
+## 🎬 Demo Flow
+1. Upload a photo of the **bridge outside the venue**  
+2. Click **“Where to Find It”** → system identifies the bridge and location  
+3. Click **“How to Make It”** → system explains structural components and steps  
+4. Highlight **audio button** (no need to play during demo)  
+5. Upload a **Lego bridge sample** → system generates similarity score  
 
-- **Mock AI**: Simulates image recognition and analysis
-- **Text-to-Speech**: Fallback audio using browser's speech synthesis
-- **Radar Charts**: Visual performance analysis using Chart.js
-- **Responsive Design**: Works on desktop and mobile
-- **Progressive Enhancement**: Graceful fallbacks for all features
+---
 
-## File Structure
+## ⚙️ Technical Notes
+- **Advanced AI** – Do visual recognition and analysis in smooth work flow
+- **Text-to-Speech** – Browser speech synthesis for audio steps  
+- **Radar Chart Scoring** – Visual feedback for alignment score  
+- **Responsive UI** – Works across desktop and mobile  
+- **Progressive Enhancement** – Accessible with fallbacks  
 
+---
+
+## 📂 File Structure
 ```
-visual-cooking-assistant/
-├── index.html          # Main application
-├── style.css           # Visual-first styling
-├── script.js           # Core functionality
-└── README.md           # This file
+full_version/
+├── index.html # Main app
+├── style.css # Styling
+├── script.js # Core logic
+└── README.md # This file
 ```
 
-## Browser Compatibility
+---
 
-- Chrome/Edge: Full functionality
-- Firefox: Full functionality
-- Safari: Full functionality
-- Mobile browsers: Optimized experience
+## ▶️ How to Run
+In the `full_version/` directory, start a local server with:
 
-## Demo Tips
+```bash
+cd full_version
+python -m http.server 8000
+```
 
-- Use sample images for reliable demo experience
-- Audio works best in Chrome/Edge
-- Mobile responsive - test on different screen sizes
-- Loading animations simulate AI processing time
+Then open http://localhost:8000
+ in your browser.
 
-## Hackathon Ready
+## 🌐 Browser Support
 
-This webapp is designed for hackathon presentations:
-- Quick setup (no dependencies)
-- Reliable demo flow
-- Visual impact
-- Clear value proposition
-- Accessibility focus
+✅ Chrome / Edge – Full support
 
-## Future Enhancements
+✅ Firefox – Full support
 
-- Real AI integration (OpenAI Vision API)
-- Real audio files for better quality
-- User accounts and recipe saving
-- Social sharing features
-- Multi-language support
+✅ Safari – Full support
+
+✅ Mobile browsers – Optimized
+
+## 🔮 Future Enhancements
+
+
+* User accounts & saved searches
+
+* Social leaderboard for vision alignment scores
+
+* Multi-language & offline audio support
+
+# ✨ VME50 makes search visual, accessible, and creative.
