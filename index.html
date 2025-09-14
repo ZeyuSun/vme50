@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Cooking Assistant</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Page 1: Upload Recipe Image -->
+    <div id="upload-page" class="page active">
+        <div class="container">
+            <h1>🍳 Visual Cooking Assistant</h1>
+            <p class="subtitle">Upload a food image to get visual cooking steps</p>
+
+            <div class="upload-area" id="upload-area">
+                <div class="upload-content">
+                    <div class="camera-icon">📷</div>
+                    <p>Drop your food image here</p>
+                    <p class="small">or click to browse</p>
+                </div>
+                <input type="file" id="file-input" accept="image/*" hidden>
+            </div>
+
+            <div class="sample-images">
+                <p>Try these samples:</p>
+                <div class="sample-grid">
+                    <img src="assets/samples/pizza.jpg" alt="Pizza" class="sample-img" data-recipe="pizza">
+                    <img src="assets/samples/coffee.jpg" alt="Coffee" class="sample-img" data-recipe="coffee">
+                    <img src="assets/samples/sandwich.jpg" alt="Sandwich" class="sample-img" data-recipe="sandwich">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 2: Visual Steps -->
+    <div id="steps-page" class="page">
+        <div class="container">
+            <div class="header">
+                <button id="back-to-upload" class="back-btn">← Back</button>
+                <h2 id="recipe-title">Pizza Recipe</h2>
+            </div>
+
+            <p class="instruction">Click on each step to hear instructions</p>
+
+            <div class="steps-grid" id="steps-grid">
+                <!-- Steps will be dynamically generated -->
+            </div>
+
+            <button id="upload-result-btn" class="primary-btn">
+                📸 Upload Your Result
+            </button>
+        </div>
+    </div>
+
+    <!-- Page 3: Upload Result -->
+    <div id="result-upload-page" class="page">
+        <div class="container">
+            <div class="header">
+                <button id="back-to-steps" class="back-btn">← Back to Steps</button>
+                <h2>How Did It Turn Out?</h2>
+            </div>
+
+            <div class="upload-area" id="result-upload-area">
+                <div class="upload-content">
+                    <div class="camera-icon">📸</div>
+                    <p>Upload your finished dish</p>
+                    <p class="small">Let's see how you did!</p>
+                </div>
+                <input type="file" id="result-file-input" accept="image/*" hidden>
+            </div>
+
+            <div class="sample-results">
+                <p>Or try these sample results:</p>
+                <div class="sample-grid">
+                    <img src="assets/results/pizza-good.jpg" alt="Good Pizza" class="sample-result" data-quality="good">
+                    <img src="assets/results/pizza-okay.jpg" alt="Okay Pizza" class="sample-result" data-quality="okay">
+                    <img src="assets/results/pizza-poor.jpg" alt="Poor Pizza" class="sample-result" data-quality="poor">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 4: Analysis Results -->
+    <div id="analysis-page" class="page">
+        <div class="container">
+            <div class="header">
+                <button id="back-to-result" class="back-btn">← Try Again</button>
+                <h2>Your Cooking Analysis</h2>
+            </div>
+
+            <div class="analysis-content">
+                <div class="comparison-images">
+                    <div class="image-comparison">
+                        <div class="comparison-item">
+                            <img id="original-image" src="" alt="Original">
+                            <p>Original Recipe</p>
+                        </div>
+                        <div class="vs">VS</div>
+                        <div class="comparison-item">
+                            <img id="result-image" src="" alt="Your Result">
+                            <p>Your Result</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="radar-section">
+                    <h3>Performance Analysis</h3>
+                    <div class="chart-container">
+                        <canvas id="radar-chart"></canvas>
+                    </div>
+                    <button id="play-feedback" class="feedback-btn">
+                        🔊 Hear Feedback
+                    </button>
+                </div>
+
+                <div class="score-details">
+                    <div class="score-grid" id="score-details">
+                        <!-- Score details will be generated -->
+                    </div>
+                </div>
+            </div>
+
+            <button id="start-over" class="primary-btn">
+                🍳 Cook Something Else
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p id="loading-text">Analyzing your dish...</p>
+        </div>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="audio-player" preload="auto"></audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
