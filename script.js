@@ -251,38 +251,26 @@ async function loadRecipe(recipeKey) {
     if (!currentRecipe) return;
 
     document.getElementById('recipe-title').textContent = currentRecipe.title;
-    showLoading('Generating realistic cooking steps...');
-
-    try {
-        const ingredients = ["mock ingredient 1", "mock ingredient 2", "mock ingredient 3"]; // Mock ingredients for mock data
-        const ingredientsInstruction = `Gather all ingredients: ${ingredients.join(', ')}.`;
-        const ingredientsStep = { id: 0, title: "Ingredients", instruction: ingredientsInstruction };
-        currentRecipe.steps.unshift(ingredientsStep); 
-
-        const ingredientsImage = await generateImageWithGemini(`All ingredients for ${currentRecipe.title}`);
-        currentRecipe.ingredientsImage = ingredientsImage;
-        await delay(1000);
-
-        const stepInstructions = currentRecipe.steps.filter(s => s.title !== "Ingredients").slice(0, 4);
-        const compositePrompt = `Create a single image as a 2x2 grid detailing four cooking steps. Each quadrant should be a realistic photo. Top-left (1): ${stepInstructions[0]?.instruction}. Top-right (2): ${stepInstructions[1]?.instruction}. Bottom-left (3): ${stepInstructions[2]?.instruction}. Bottom-right (4): ${stepInstructions[3]?.instruction}. Do not include any numbers or text overlays on the image.`;
-        const stepsImage = await generateImageWithGemini(compositePrompt);
-        currentRecipe.compositeStepsImage = stepsImage;
-        
-        hideLoading();
-        generateStepsGrid();
-        showPage('steps-page');
-    } catch (error) {
-        console.error('Failed to generate images for mock recipe:', error);
-        hideLoading();
-        generateStepsGrid(); 
-        showPage('steps-page');
-    }
+    showLoading('Generating mock recipe steps...');
+    const ingredients = ["mock ingredient 1", "mock ingredient 2", "mock ingredient 3"];
+    const ingredientsInstruction = `Gather all ingredients: ${ingredients.join(', ')}.`;
+    const ingredientsStep = { id: 0, title: "Ingredients", instruction: ingredientsInstruction };
+    currentRecipe.steps.unshift(ingredientsStep);
+    hideLoading();
+    generateStepsGrid();
+    showPage('steps-page');
 }
 
 
 function generateStepsGrid() {
     const stepsGrid = document.getElementById('steps-grid');
     stepsGrid.innerHTML = '';
+    // Apply 2-column grid styling
+    stepsGrid.style.display = 'grid';
+    stepsGrid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(250px, 1fr))';
+    stepsGrid.style.gap = '1.5rem';
+
+
     const ingredientsDisplay = document.getElementById('ingredients-display');
     ingredientsDisplay.innerHTML = '';
 
@@ -302,58 +290,29 @@ function generateStepsGrid() {
 
     const cookingSteps = currentRecipe.steps.filter(step => step.title !== "Ingredients");
     if (cookingSteps.length > 0) {
-        const allStepsCard = document.createElement('div');
-        allStepsCard.className = 'all-steps-card';
-
-        const compositeImage = document.createElement('img');
-        compositeImage.src = currentRecipe.compositeStepsImage || createRealisticStepPlaceholder('Cooking Steps', 'All steps combined');
-        compositeImage.alt = "All Cooking Steps";
-        compositeImage.className = 'composite-step-image';
-        allStepsCard.appendChild(compositeImage);
-
-        // Clickable header to toggle instructions
-        const instructionsHeader = document.createElement('h3');
-        instructionsHeader.className = 'instructions-header';
-        instructionsHeader.innerHTML = 'Cooking Steps <span>(Click to expand)</span>';
-        
-        const instructionsList = document.createElement('ol');
-        instructionsList.className = 'instructions-list';
-        instructionsList.style.display = 'none'; // Initially hidden
-
-        instructionsHeader.addEventListener('click', () => {
-            const isHidden = instructionsList.style.display === 'none';
-            instructionsList.style.display = isHidden ? 'block' : 'none';
-            instructionsHeader.querySelector('span').textContent = isHidden ? '(Click to collapse)' : '(Click to expand)';
-        });
-        
-        allStepsCard.appendChild(instructionsHeader);
-
-
         cookingSteps.forEach(step => {
             const timeEstimate = step.timeEstimate || estimateStepTime(step.instruction, step.title);
-            const listItem = document.createElement('li');
-            listItem.innerHTML = `
-                <div class="step-instruction-text"><strong>Step ${step.id}:</strong> ${step.instruction}</div>
-                <div class="step-details"><span class="step-time">⏱️ ${timeEstimate}</span><div class="audio-icon small">🔊</div></div>
+            const stepCard = document.createElement('div');
+            stepCard.className = 'step-card';
+            stepCard.innerHTML = `
+                <div class="step-number">${step.id}</div>
+                <img src="${step.image || createRealisticStepPlaceholder(step.title, step.instruction)}" alt="${step.title}" class="step-image" style="height: 280px; width: 100%; object-fit: cover;">
+                <div class="step-title">${step.title}</div>
+                <div class="step-time">⏱️ ${timeEstimate}</div>
+                <div class="audio-icon">🔊</div>
             `;
-            listItem.addEventListener('click', (e) => {
-                e.stopPropagation();
-                playStepAudio(step, listItem);
-            });
-            instructionsList.appendChild(listItem);
+            stepCard.addEventListener('click', () => playStepAudio(step, stepCard));
+            stepsGrid.appendChild(stepCard);
         });
-        allStepsCard.appendChild(instructionsList);
-        stepsGrid.appendChild(allStepsCard);
     }
 }
 
+
 function playStepAudio(step, element) {
-    // Remove 'playing' class from any other element before proceeding
     if (currentPlayingStep && currentPlayingStep !== element) {
         currentPlayingStep.classList.remove('playing');
     }
     
-    // If the clicked element is already playing, pause and toggle off
     if (currentPlayingStep === element && !audioPlayer.paused) {
         audioPlayer.pause();
         element.classList.remove('playing');
@@ -507,7 +466,7 @@ async function analyzeUploadedFood(imageFile) {
     }
     try {
         const base64Image = await fileToBase64(imageFile);
-        const prompt = `You are an expert chef. Look at this image of a food dish. Identify the most likely name of the dish. Your response must be in JSON format only. The JSON should contain: 'dishName' (a string, in English), 'ingredients' (an array of key ingredient strings), and 'cookingSteps' (an array of 4 to 6 simple step objects, each with an 'id', 'title', and 'instruction'). For example: {"dishName": "Spaghetti Carbonara", "ingredients": ["spaghetti", "eggs", "pecorino cheese", "guanciale", "black pepper"], "cookingSteps": [...]}. Only identify common, well-known dishes.`;
+        const prompt = `You are an expert chef. Look at this image of a food dish. Identify the most likely name of the dish. Your response must be in JSON format only. The JSON should contain: 'dishName' (a string, in English), 'ingredients' (an array of key ingredient strings), and 'cookingSteps' (an array of exactly 4 simple step objects, each with an 'id', 'title', and 'instruction'). For example: {"dishName": "Spaghetti Carbonara", "ingredients": ["spaghetti", "eggs", "pecorino cheese", "guanciale", "black pepper"], "cookingSteps": [...]}. Only identify common, well-known dishes.`;
         const requestBody = { contents: [{ parts: [ { text: prompt }, { inline_data: { mime_type: imageFile.type, data: base64Image } } ] }] };
         const response = await fetch(`${CONFIG.GEMINI_TEXT_API_URL}?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody) });
         if (!response.ok) throw new Error(`API request failed: ${response.status}`);
@@ -520,31 +479,7 @@ async function analyzeUploadedFood(imageFile) {
         console.error('Food analysis failed:', error);
         const recipes = Object.keys(recipeData);
         const randomRecipe = recipes[Math.floor(Math.random() * recipes.length)];
-        return { dishName: recipeData[randomRecipe].title, ingredients: ["mock ingredient 1", "mock ingredient 2"], cookingSteps: recipeData[randomRecipe].steps };
-    }
-}
-
-async function generateStepImage(instruction, stepTitle) {
-    if (!CONFIG.ENABLE_AI_IMAGE_GENERATION) {
-        return createRealisticStepPlaceholder(stepTitle, instruction);
-    }
-    const cacheKey = `${stepTitle}-${instruction}`;
-    if (imageCache.has(cacheKey)) {
-        return imageCache.get(cacheKey);
-    }
-    try {
-        const imagePrompt = `Generate a realistic, high-quality photograph of a cooking step: ${instruction}. Show the actual cooking process in a clean, modern kitchen. Professional food photography style with good lighting, sharp focus, and appetizing presentation. No text, labels, or overlays in the image. Focus on the hands, ingredients, and cooking tools performing the specific action described.`;
-        const generatedImage = await generateImageWithGemini(imagePrompt);
-        imageCache.set(cacheKey, generatedImage);
-        try {
-            const imageCacheData = JSON.parse(localStorage.getItem('cookingImageCache') || '{}');
-            imageCacheData[cacheKey] = generatedImage;
-            localStorage.setItem('cookingImageCache', JSON.stringify(imageCacheData));
-        } catch (storageError) { console.log('Could not save to local storage:', storageError); }
-        return generatedImage;
-    } catch (error) {
-        console.error(`Image generation failed for step: ${stepTitle}`, error);
-        return createRealisticStepPlaceholder(stepTitle, instruction);
+        return { dishName: recipeData[randomRecipe].title, ingredients: ["mock ingredient 1", "mock ingredient 2"], cookingSteps: recipeData[randomRecipe].steps.slice(0, 4) };
     }
 }
 
@@ -566,6 +501,31 @@ async function generateImageWithGemini(prompt) {
         console.error('Image generation with Gemini failed:', error);
         return createRealisticStepPlaceholder("Error", "Could not generate image");
     }
+}
+
+async function sliceCompositeImage(imageUrl) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = () => {
+            const quadrantWidth = img.width / 2;
+            const quadrantHeight = img.height / 2;
+            const slicedImages = [];
+            for (let i = 0; i < 4; i++) {
+                const canvas = document.createElement('canvas');
+                canvas.width = quadrantWidth;
+                canvas.height = quadrantHeight;
+                const ctx = canvas.getContext('2d');
+                const sx = (i % 2) * quadrantWidth;
+                const sy = Math.floor(i / 2) * quadrantHeight;
+                ctx.drawImage(img, sx, sy, quadrantWidth, quadrantHeight, 0, 0, quadrantWidth, quadrantHeight);
+                slicedImages.push(canvas.toDataURL());
+            }
+            resolve(slicedImages);
+        };
+        img.onerror = () => reject(new Error('Failed to load composite image for slicing.'));
+        img.src = imageUrl;
+    });
 }
 
 async function analyzeResultWithGemini(imageFile, originalRecipe) {
@@ -595,7 +555,6 @@ async function analyzeResultWithGemini(imageFile, originalRecipe) {
 // --- TTS FUNCTIONS ---
 async function generateAndPlayTTS(text, voice = 'Puck') {
     if (!text) return;
-
     const payload = {
         contents: [{ parts: [{ text: `Speak in a friendly, clear, and encouraging tone: ${text}` }] }],
         generationConfig: {
@@ -604,21 +563,13 @@ async function generateAndPlayTTS(text, voice = 'Puck') {
         },
         model: "gemini-2.5-flash-preview-tts"
     };
-
     try {
-        const response = await fetch(`${CONFIG.GEMINI_TTS_API_URL}?key=${GEMINI_API_KEY}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
+        const response = await fetch(`${CONFIG.GEMINI_TTS_API_URL}?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
         if (!response.ok) throw new Error(`TTS API request failed: ${response.status}`);
-
         const result = await response.json();
         const part = result?.candidates?.[0]?.content?.parts?.[0];
         const audioData = part?.inlineData?.data;
         const mimeType = part?.inlineData?.mimeType;
-
         if (audioData && mimeType?.startsWith("audio/")) {
             const sampleRateMatch = mimeType.match(/rate=(\d+)/);
             const sampleRate = sampleRateMatch ? parseInt(sampleRateMatch[1], 10) : 24000;
@@ -626,12 +577,9 @@ async function generateAndPlayTTS(text, voice = 'Puck') {
             const pcm16 = new Int16Array(pcmData);
             const wavBlob = pcmToWav(pcm16, 1, sampleRate);
             const audioUrl = URL.createObjectURL(wavBlob);
-            
             audioPlayer.src = audioUrl;
             audioPlayer.play();
-        } else {
-            throw new Error("Invalid audio data in API response.");
-        }
+        } else { throw new Error("Invalid audio data in API response."); }
     } catch (error) {
         console.error("Error in generateAndPlayTTS:", error);
         speakText(text);
@@ -697,7 +645,7 @@ async function createDynamicRecipe(analysis, originalImageFile) {
             steps: []
         };
 
-        await delay(1000); // Wait after analysis before image generation
+        await delay(1000);
 
         showLoading('Generating ingredients image...');
         const ingredientsList = (analysis.ingredients || []).join(', ');
@@ -718,7 +666,7 @@ async function createDynamicRecipe(analysis, originalImageFile) {
 
         showLoading('Generating step-by-step cooking images...');
         
-        const cookingSteps = analysis.cookingSteps.slice(0, 4);
+        const cookingSteps = analysis.cookingSteps;
         const compositePrompt = `Create a single image as a 2x2 grid detailing four cooking steps for making ${analysis.dishName}. Each quadrant should be a realistic, appetizing photo. 
         Top-left (Step 1): ${cookingSteps[0]?.instruction || ''}. 
         Top-right (Step 2): ${cookingSteps[1]?.instruction || ''}. 
@@ -727,9 +675,15 @@ async function createDynamicRecipe(analysis, originalImageFile) {
         Do not include any numbers, text, or graphic overlays on the image itself.`;
 
         const stepsImage = await generateImageWithGemini(compositePrompt);
-        dynamicRecipe.compositeStepsImage = stepsImage;
-        
-        dynamicRecipe.steps.push(...analysis.cookingSteps);
+        const slicedImageUrls = await sliceCompositeImage(stepsImage);
+
+        cookingSteps.forEach((step, index) => {
+            if (slicedImageUrls[index]) {
+                step.image = slicedImageUrls[index];
+            }
+        });
+
+        dynamicRecipe.steps.push(...cookingSteps);
 
         currentRecipe = dynamicRecipe;
         document.getElementById('recipe-title').textContent = currentRecipe.title;
@@ -764,15 +718,16 @@ async function createComparisonImage() {
     const canvas = document.createElement('canvas');
     canvas.width = 1200; canvas.height = 800;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, 1200, 800);
-    ctx.strokeStyle = '#e0e0e0';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(10, 10, 1180, 780);
-    ctx.fillStyle = '#333333';
-    ctx.font = 'bold 36px Arial';
+
+    // Light background color
+    ctx.fillStyle = '#f7fafc';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Title
+    ctx.fillStyle = '#2d3748';
+    ctx.font = 'bold 40px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText(`${currentRecipe.title} - Cooking Analysis`, 600, 60);
+    ctx.fillText(`${currentRecipe.title} - Cooking Analysis`, canvas.width / 2, 70);
 
     const originalImg = new Image();
     const resultImg = new Image();
@@ -781,28 +736,29 @@ async function createComparisonImage() {
 
     return new Promise((resolve) => {
         let imagesLoaded = 0;
-        const checkComplete = () => {
+        const onImageLoad = () => {
             imagesLoaded++;
             if (imagesLoaded === 2) {
-                ctx.drawImage(originalImg, 100, 100, 300, 300);
-                ctx.fillStyle = '#666666';
-                ctx.font = 'bold 20px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText('Original Recipe', 250, 430);
-                ctx.drawImage(resultImg, 800, 100, 300, 300);
-                ctx.fillText('Your Result', 950, 430);
-                drawRadarChartOnCanvas(ctx, currentAnalysis.scores, 600, 500, 200);
-                const averageScore = Object.values(currentAnalysis.scores).reduce((a, b) => a + b, 0) / 5;
-                ctx.fillStyle = '#333333';
+                // Draw Original Image
+                ctx.fillStyle = '#4a5568';
                 ctx.font = 'bold 24px Arial';
-                ctx.fillText(`Overall Score: ${averageScore.toFixed(1)}/5`, 600, 750);
+                ctx.fillText('Original Recipe', 300, 140);
+                ctx.drawImage(originalImg, 150, 170, 300, 300);
+
+                // Draw Your Result Image
+                ctx.fillText('Your Result', 900, 140);
+                ctx.drawImage(resultImg, 750, 170, 300, 300);
+
+                // Draw Radar Chart
+                drawRadarChartOnCanvas(ctx, currentAnalysis.scores, canvas.width / 2, 600, 150);
+                
                 resolve(canvas.toDataURL('image/png'));
             }
         };
-        originalImg.onload = checkComplete;
-        resultImg.onload = checkComplete;
-        originalImg.onerror = () => { console.error("Error loading original image for canvas."); checkComplete(); };
-        resultImg.onerror = () => { console.error("Error loading result image for canvas."); checkComplete(); };
+        originalImg.onload = onImageLoad;
+        resultImg.onload = onImageLoad;
+        originalImg.onerror = () => { console.error("Error loading original image for canvas."); onImageLoad(); };
+        resultImg.onerror = () => { console.error("Error loading result image for canvas."); onImageLoad(); };
         originalImg.src = document.getElementById('original-image').src;
         resultImg.src = document.getElementById('result-image').src;
     });
@@ -811,71 +767,110 @@ async function createComparisonImage() {
 function drawRadarChartOnCanvas(ctx, scores, centerX, centerY, radius) {
     const categories = ['Color', 'Texture', 'Ingredients', 'Presentation', 'Portion'];
     const values = [scores.color, scores.texture, scores.ingredients, scores.presentation, scores.portion];
-    const angles = categories.map((_, i) => (Math.PI * 2 * i) / categories.length - Math.PI / 2);
+    const angleStep = (Math.PI * 2) / categories.length;
 
-    ctx.strokeStyle = '#e0e0e0';
+    // Draw grid lines
+    ctx.strokeStyle = '#cbd5e0';
     ctx.lineWidth = 1;
     for (let r = 1; r <= 5; r++) {
         ctx.beginPath();
-        ctx.arc(centerX, centerY, (radius * r) / 5, 0, Math.PI * 2);
+        for (let i = 0; i <= categories.length; i++) {
+            const angle = i * angleStep - Math.PI / 2;
+            const r_scaled = (radius * r) / 5;
+            const x = centerX + Math.cos(angle) * r_scaled;
+            const y = centerY + Math.sin(angle) * r_scaled;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
         ctx.stroke();
     }
-    
-    ctx.strokeStyle = '#cccccc';
-    angles.forEach(angle => {
-        const x = centerX + Math.cos(angle) * radius;
-        const y = centerY + Math.sin(angle) * radius;
-        ctx.beginPath(); ctx.moveTo(centerX, centerY); ctx.lineTo(x, y); ctx.stroke();
-    });
 
-    ctx.fillStyle = 'rgba(102, 126, 234, 0.3)';
-    ctx.strokeStyle = 'rgba(102, 126, 234, 1)';
-    ctx.lineWidth = 2;
+    // Draw axes
+    ctx.strokeStyle = '#a0aec0';
+    for (let i = 0; i < categories.length; i++) {
+        const angle = i * angleStep - Math.PI / 2;
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(centerX + Math.cos(angle) * radius, centerY + Math.sin(angle) * radius);
+        ctx.stroke();
+    }
+
+    // Draw data polygon
     ctx.beginPath();
     values.forEach((value, i) => {
-        const angle = angles[i]; const r = (value / 5) * radius;
-        const x = centerX + Math.cos(angle) * r; const y = centerY + Math.sin(angle) * r;
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        const angle = i * angleStep - Math.PI / 2;
+        const r_scaled = (value / 5) * radius;
+        const x = centerX + Math.cos(angle) * r_scaled;
+        const y = centerY + Math.sin(angle) * r_scaled;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
     });
-    ctx.closePath(); ctx.fill(); ctx.stroke();
-    
-    ctx.fillStyle = '#666666'; ctx.font = '14px Arial'; ctx.textAlign = 'center';
+    ctx.closePath();
+    ctx.strokeStyle = '#5a67d8';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(90, 103, 216, 0.3)';
+    ctx.fill();
+
+    // Draw labels
+    ctx.fillStyle = '#2d3748';
+    ctx.font = 'bold 16px Arial';
     categories.forEach((category, i) => {
-        const angle = angles[i];
-        const x = centerX + Math.cos(angle) * (radius + 30); const y = centerY + Math.sin(angle) * (radius + 30);
+        const angle = i * angleStep - Math.PI / 2;
+        const x = centerX + Math.cos(angle) * (radius + 25);
+        const y = centerY + Math.sin(angle) * (radius + 25);
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
         ctx.fillText(category, x, y);
     });
 }
 
-async function shareToInstagram() {
+async function universalShare() {
     try {
         const imageDataUrl = await createComparisonImage();
         const response = await fetch(imageDataUrl);
         const blob = await response.blob();
-        if (navigator.share) {
-            const file = new File([blob], 'cooking-analysis.png', { type: 'image/png' });
-            await navigator.share({ title: `${currentRecipe.title} - Cooking Analysis`, text: `Check out my cooking analysis! ${currentAnalysis.feedback}`, files: [file] });
-        } else {
-            window.open(`https://www.instagram.com/`, '_blank');
-            downloadImage(imageDataUrl, 'cooking-analysis-instagram.png');
+        const file = new File([blob], 'cooking-analysis.png', { type: 'image/png' });
+        const shareData = {
+            title: `${currentRecipe.title} - Cooking Analysis`,
+            text: `Check out my cooking results for ${currentRecipe.title}!`,
+            files: [file],
+        };
+
+        if (navigator.canShare && navigator.canShare(shareData)) {
+            await navigator.share(shareData);
+            return { shared: true };
         }
+        return { shared: false };
     } catch (error) {
-        console.error('Instagram sharing failed:', error);
-        alert('Sharing not available. Image will be downloaded instead.');
-        downloadComparison();
+        console.error('Error sharing:', error);
+        return { shared: false, error: error };
+    }
+}
+
+async function shareToInstagram() {
+    const result = await universalShare();
+    if (!result.shared) {
+        alert('Sharing with image not supported on this browser. Try on a mobile device!');
     }
 }
 
 async function shareToTwitter() {
-    const averageScore = Object.values(currentAnalysis.scores).reduce((a, b) => a + b, 0) / 5;
-    const scoreEmoji = averageScore >= 4 ? '🌟' : averageScore >= 3 ? '👍' : '💪';
-    const text = encodeURIComponent(`Just cooked ${currentRecipe.title} and got analyzed by AI! ${scoreEmoji}\nAverage score: ${averageScore.toFixed(1)}/5\n#CookingWithAI #VisualCookingAssistant`);
-    window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+    const result = await universalShare();
+    if (!result.shared) {
+        // Fallback to text-only share
+        const text = encodeURIComponent(`Just cooked ${currentRecipe.title} and got analyzed by AI! #CookingWithAI`);
+        window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+    }
 }
 
 async function shareToFacebook() {
-    const text = encodeURIComponent(`I just used the Visual Cooking Assistant to make ${currentRecipe.title}! The AI gave me detailed feedback and scores. Check out this amazing cooking tool!`);
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${text}`, '_blank');
+    const result = await universalShare();
+    if (!result.shared) {
+        // Fallback to text-only share
+        const text = encodeURIComponent(`I just used the Visual Cooking Assistant to make ${currentRecipe.title}!`);
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${text}`, '_blank');
+    }
 }
 
 async function saveToAlbum() {
