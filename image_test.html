@@ -1,18 +1,55 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gemini 多功能测试页</title>
+    <title>Visual Quest Assistant</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
+        /* Custom Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        .page {
+            display: none;
+            min-height: 100vh;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .page.active {
+            display: flex;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .upload-area {
+            border: 3px dashed #9ca3af;
+            transition: all 0.3s ease;
+        }
+        .upload-area.dragover {
+            border-color: #4f46e5;
+            background-color: #eef2ff;
+        }
+        .step-card, .ingredients-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        .step-card:hover, .ingredients-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .step-card.playing, .ingredients-card.playing {
+            box-shadow: 0 0 0 4px #4f46e5;
+            transform: translateY(-2px);
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            border-top: 4px solid #fff;
+            width: 50px;
+            height: 50px;
             animation: spin 1s linear infinite;
         }
         @keyframes spin {
@@ -21,237 +58,722 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
-    <div class="container mx-auto p-6 my-10 bg-white rounded-lg shadow-xl max-w-2xl">
-        <h1 class="text-3xl font-bold mb-6 text-center text-gray-900">Gemini 多功能测试页</h1>
+<body class="bg-gray-50 text-gray-800">
 
-        <!-- Section: Image Generation -->
-        <div class="border rounded-lg p-6 mb-8">
-            <h2 class="text-2xl font-semibold mb-4 text-center">1. 图片生成测试</h2>
-            <div class="mb-4">
-                <label for="img-prompt" class="block text-sm font-medium text-gray-700 mb-2">图片提示词:</label>
-                <textarea id="img-prompt" rows="3" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="例如：一只穿着宇航服的猫在月球上吃披萨"></textarea>
-            </div>
-            <button id="generate-img-btn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition duration-300">
-                生成并下载图片
-            </button>
-            <div id="img-status" class="mt-4 text-center flex items-center justify-center h-8"></div>
-            <div class="mt-4 bg-gray-200 rounded-md h-64 flex items-center justify-center">
-                <img id="result-image" src="" alt="生成的图片" class="max-w-full max-h-full rounded-md hidden">
-                <p id="placeholder-text" class="text-gray-500">图片将在这里显示</p>
+    <!-- Page 1: Upload Image -->
+    <div id="upload-page" class="page active flex-col justify-center items-center p-4">
+        <div class="w-full max-w-2xl text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900">🚀 Visual Quest Assistant</h1>
+            <p class="mt-4 text-lg text-gray-600">Upload an image to start your quest: Make it or Find it.</p>
+
+            <div id="upload-area" class="upload-area mt-8 w-full h-64 rounded-xl bg-white shadow-sm flex flex-col justify-center items-center cursor-pointer">
+                <div class="text-center text-gray-500">
+                    <svg class="mx-auto h-16 w-16 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    <p class="mt-2 font-semibold">Drop your image here</p>
+                    <p class="text-sm">or click to browse</p>
+                </div>
+                <input type="file" id="file-input" accept="image/*" class="hidden">
             </div>
         </div>
-
-        <!-- Section: TTS Generation -->
-        <div class="border rounded-lg p-6">
-            <h2 class="text-2xl font-semibold mb-4 text-center">2. 语音生成 (TTS) 测试</h2>
-            <div class="mb-4">
-                <label for="tts-text" class="block text-sm font-medium text-gray-700 mb-2">要朗读的文本:</label>
-                <textarea id="tts-text" rows="3" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500" placeholder="例如：你好，世界！今天天气真好。"></textarea>
-            </div>
-             <div class="mb-4">
-                <label for="voice-select" class="block text-sm font-medium text-gray-700 mb-2">选择声音:</label>
-                <select id="voice-select" class="w-full p-2 border border-gray-300 rounded-md">
-                    <option value="Puck">Puck (男声, 活泼)</option>
-                    <option value="Kore">Kore (女声, 坚定)</option>
-                    <option value="Zephyr">Zephyr (女声, 明亮)</option>
-                    <option value="Charon">Charon (男声, 信息丰富)</option>
-                    <option value="Leda">Leda (女声, 年轻)</option>
-                    <option value="Orus">Orus (男声, 坚定)</option>
-                    <option value="Sadaltager">Sadaltager (男声, 博学)</option>
-                    <option value="Vindemiatrix">Vindemiatrix (女声, 温柔)</option>
-                </select>
-            </div>
-            <button id="generate-tts-btn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-md transition duration-300">
-                生成并播放语音
+    </div>
+    
+    <!-- Page 2: Choose Quest -->
+    <div id="choice-page" class="page flex-col justify-center items-center p-4">
+        <div class="w-full max-w-3xl text-center bg-white p-8 rounded-2xl shadow-lg">
+             <button id="back-to-upload" class="absolute top-4 left-4 text-gray-500 hover:text-gray-800 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
             </button>
-            <div id="tts-status" class="mt-4 text-center flex items-center justify-center h-8"></div>
-            <audio id="tts-audio" controls class="w-full mt-4 hidden"></audio>
+            <h2 class="text-3xl font-bold text-gray-900">What's Your Quest?</h2>
+            <p class="mt-2 text-gray-600">You've uploaded this image. What do you want to do with it?</p>
+            <img id="choice-image-preview" src="" alt="Image preview" class="mt-6 mx-auto max-h-60 rounded-xl shadow-md">
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <button id="make-it-btn" class="w-full bg-indigo-600 text-white font-semibold py-4 px-6 rounded-lg hover:bg-indigo-700 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    🛠️ How to make it?
+                </button>
+                <button id="find-it-btn" class="w-full bg-teal-500 text-white font-semibold py-4 px-6 rounded-lg hover:bg-teal-600 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+                    🔍 Where to find it?
+                </button>
+            </div>
         </div>
     </div>
 
-    <script>
-        // *******************************************************************
-        // !! 重要 !!: 请在这里填入你的 Gemini API Key
-        // *******************************************************************
-        const GEMINI_API_KEY = "AIzaSyDibV2f5h1NF_hKtzeAL9MSjvj7ft9hm_s"; // 替换成你的 API Key
 
-        // --- DOM Elements ---
-        const generateImgBtn = document.getElementById('generate-img-btn');
-        const imgPromptInput = document.getElementById('img-prompt');
-        const imgStatusDiv = document.getElementById('img-status');
-        const resultImage = document.getElementById('result-image');
-        const placeholderText = document.getElementById('placeholder-text');
+    <!-- Page 3: Visual Steps -->
+    <div id="steps-page" class="page flex-col items-center p-4 md:p-8">
+        <div class="w-full max-w-5xl">
+            <div class="relative flex items-center justify-center mb-6">
+                <button id="back-to-choice" class="absolute left-0 text-gray-500 hover:text-gray-800 transition">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                </button>
+                <h2 id="protocol-title" class="text-3xl font-bold text-center">Protocol Title</h2>
+            </div>
 
-        const generateTtsBtn = document.getElementById('generate-tts-btn');
-        const ttsTextInput = document.getElementById('tts-text');
-        const voiceSelect = document.getElementById('voice-select');
-        const ttsStatusDiv = document.getElementById('tts-status');
-        const ttsAudio = document.getElementById('tts-audio');
+            <p class="text-center text-gray-600 mb-6">Click on each step to hear the instructions.</p>
+
+            <div id="materials-display" class="mb-8">
+                <!-- Materials/Ingredients will be dynamically generated here -->
+            </div>
+
+            <div id="steps-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Steps will be dynamically generated here -->
+            </div>
+
+            <div class="mt-10 text-center space-x-4">
+                 <button id="upload-result-btn" class="bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-indigo-700 transition">
+                    📸 I did it! Upload My Result
+                </button>
+                <button id="save-protocol-btn" class="bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-800 transition">
+                    💾 Save Protocol
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Page 4: Analysis Results -->
+    <div id="analysis-page" class="page flex-col items-center p-4 md:p-8">
+        <div class="container w-full max-w-5xl mx-auto">
+            <div class="relative flex items-center justify-center mb-6">
+                <button id="back-to-steps" class="absolute left-0 text-gray-500 hover:text-gray-800 transition">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                </button>
+                <h2 class="text-3xl font-bold text-center">Similarity Analysis</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-lg">
+                    <div class="grid grid-cols-2 items-center gap-4">
+                        <div class="text-center">
+                            <img id="original-image" src="" alt="Original" class="w-full rounded-xl shadow-md">
+                            <p class="mt-2 font-semibold">Original</p>
+                        </div>
+                        <div class="text-center">
+                            <img id="result-image" src="" alt="Your Result" class="w-full rounded-xl shadow-md">
+                            <p class="mt-2 font-semibold">Your Result</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-lg flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold text-center">Performance Analysis</h3>
+                        <div class="chart-container relative h-64 w-full">
+                            <canvas id="radar-chart"></canvas>
+                        </div>
+                         <button id="play-feedback" class="w-full mt-4 bg-teal-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-teal-600 transition">
+                            🔊 Hear Feedback
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 bg-white p-6 rounded-2xl shadow-lg">
+                 <h3 class="text-xl font-bold text-center mb-4">Score Details</h3>
+                 <div id="score-details" class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
+                    <!-- Score details will be generated -->
+                </div>
+            </div>
+
+            <div class="mt-10 text-center">
+                <button id="start-over" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-indigo-700 transition">
+                    🚀 Start a New Quest
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-75 z-50 flex-col justify-center items-center hidden">
+        <div class="spinner"></div>
+        <p id="loading-text" class="mt-4 text-white text-lg">Analyzing...</p>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="audio-player" preload="auto"></audio>
+
+<script>
+// --- CONFIGURATION ---
+const CONFIG = {
+    // IMPORTANT: Replace with your actual Gemini API key if you are not using the integrated environment
+    GEMINI_API_KEY: "AIzaSyDibV2f5h1NF_hKtzeAL9MSjvj7ft9hm_s", 
+    GEMINI_TEXT_API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+    GEMINI_IMAGE_API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent',
+    GEMINI_TTS_API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent',
+    ENABLE_AI_FEATURES: true,
+};
+
+// --- GLOBAL STATE ---
+let stagedFile = null;
+let currentMode = null; // 'make' or 'find'
+let currentItemProtocol = null;
+let currentAnalysis = null;
+let audioPlayer = null;
+let currentPlayingStepElement = null;
+
+// --- INITIALIZATION ---
+document.addEventListener('DOMContentLoaded', () => {
+    audioPlayer = document.getElementById('audio-player');
+    setupEventListeners();
+});
+
+// --- EVENT LISTENERS ---
+function setupEventListeners() {
+    // Page 1: Upload
+    const uploadArea = document.getElementById('upload-area');
+    const fileInput = document.getElementById('file-input');
+    uploadArea.addEventListener('click', () => fileInput.click());
+    uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); e.currentTarget.classList.add('dragover'); });
+    uploadArea.addEventListener('dragleave', (e) => e.currentTarget.classList.remove('dragover'));
+    uploadArea.addEventListener('drop', handleFileDrop);
+    fileInput.addEventListener('change', (e) => handleFileSelect(e.target.files));
+
+    // Page 2: Choice
+    document.getElementById('back-to-upload').addEventListener('click', () => showPage('upload-page'));
+    document.getElementById('make-it-btn').addEventListener('click', handleMakeIt);
+    document.getElementById('find-it-btn').addEventListener('click', handleFindIt);
+
+    // Page 3: Steps
+    document.getElementById('back-to-choice').addEventListener('click', () => showPage('choice-page'));
+    document.getElementById('upload-result-btn').addEventListener('click', () => {
+         // Create a file input dynamically
+        const resultFileInput = document.createElement('input');
+        resultFileInput.type = 'file';
+        resultFileInput.accept = 'image/*';
+        resultFileInput.style.display = 'none';
+        resultFileInput.addEventListener('change', (e) => processResultFile(e.target.files[0]));
+        document.body.appendChild(resultFileInput);
+        resultFileInput.click();
+        document.body.removeChild(resultFileInput);
+    });
+    document.getElementById('save-protocol-btn').addEventListener('click', saveProtocolToFile);
+
+    // Page 4: Analysis
+    document.getElementById('back-to-steps').addEventListener('click', () => showPage('steps-page'));
+    document.getElementById('start-over').addEventListener('click', () => showPage('upload-page'));
+    document.getElementById('play-feedback').addEventListener('click', playFeedback);
+    
+    audioPlayer.addEventListener('ended', () => {
+        if (currentPlayingStepElement) {
+            currentPlayingStepElement.classList.remove('playing');
+            currentPlayingStepElement = null;
+        }
+    });
+}
+
+// --- PAGE NAVIGATION & UI ---
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+}
+
+function showLoading(text) {
+    document.getElementById('loading-text').textContent = text;
+    document.getElementById('loading-overlay').style.display = 'flex';
+}
+
+function hideLoading() {
+    document.getElementById('loading-overlay').style.display = 'none';
+}
+
+// --- FILE HANDLING ---
+function handleFileDrop(e) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('dragover');
+    handleFileSelect(e.dataTransfer.files);
+}
+
+function handleFileSelect(files) {
+    if (files.length > 0) {
+        const file = files[0];
+        if (!file.type.startsWith('image/')) {
+            alert('Please select an image file.');
+            return;
+        }
+        stagedFile = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('choice-image-preview').src = e.target.result;
+            showPage('choice-page');
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// --- CORE LOGIC FLOWS ---
+async function handleMakeIt() {
+    currentMode = 'make';
+    if (!stagedFile) return;
+    showLoading('Analyzing your image...');
+    
+    if (!CONFIG.ENABLE_AI_FEATURES) {
+        // Fallback for when AI is disabled
+        console.warn("AI is disabled. Cannot proceed with 'Make It' flow.");
+        hideLoading();
+        alert("AI features are disabled in the configuration.");
+        return;
+    }
+
+    try {
+        const analysis = await analyzeUploadedItemForMaking(stagedFile);
+        await createDynamicProtocol(analysis, stagedFile);
+    } catch (error) {
+        console.error('Make It flow failed:', error);
+        alert('Could not generate a protocol for this image. Please try another one.');
+    } finally {
+        hideLoading();
+    }
+}
+
+async function handleFindIt() {
+    currentMode = 'find';
+    if (!stagedFile) return;
+    showLoading('Locating item source...');
+
+    if (!CONFIG.ENABLE_AI_FEATURES) {
+        // Fallback for when AI is disabled
+        console.warn("AI is disabled. Cannot proceed with 'Find It' flow.");
+        hideLoading();
+        alert("AI features are disabled in the configuration.");
+        return;
+    }
+
+    try {
+        const analysis = await analyzeUploadedItemForFinding(stagedFile);
+        await createDynamicFindingSteps(analysis, stagedFile);
+    } catch (error) {
+        console.error('Find It flow failed:', error);
+        alert('Could not find this item. Please try another one.');
+    } finally {
+        hideLoading();
+    }
+}
+
+async function processResultFile(file) {
+    if (!file) return;
+    showLoading('Analyzing your result...');
+    
+    try {
+        const analysis = await analyzeResultWithGemini(file, currentItemProtocol, currentMode);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            displayAnalysis(analysis, e.target.result);
+            hideLoading();
+        };
+        reader.readAsDataURL(file);
+    } catch (error) {
+        console.error('Result processing failed:', error);
+        hideLoading();
+        alert('Analysis failed. Please try again.');
+    }
+}
+
+
+// --- DYNAMIC CONTENT GENERATION ---
+async function createDynamicProtocol(analysis, originalImageFile) {
+    showLoading('Generating materials & steps...');
+    currentItemProtocol = {
+        title: analysis.itemName,
+        originalImage: URL.createObjectURL(originalImageFile),
+        steps: []
+    };
+    
+    // 1. Generate Materials Image
+    showLoading('Generating materials image...');
+    const materialsList = (analysis.materials || []).join(', ');
+    const materialsPrompt = `Generate a realistic, high-quality photograph showing all the materials needed to make ${analysis.itemName}: ${materialsList}. Display materials neatly arranged on a clean, neutral background. Professional product photography style. No text.`;
+    const materialsImage = await generateImageWithGemini(materialsPrompt);
+    
+    currentItemProtocol.materialsImage = materialsImage;
+    const materialsInstruction = `First, gather your materials: ${materialsList}.`;
+    currentItemProtocol.steps.push({ id: 0, title: "Materials", instruction: materialsInstruction });
+
+    // 2. Generate Steps Image
+    showLoading('Generating step-by-step images...');
+    const makingSteps = analysis.makingSteps;
+    const compositePrompt = `Create a single image as a 2x2 grid detailing four steps for making ${analysis.itemName}. Each quadrant should be a realistic photo. 
+    Top-left (Step 1): ${makingSteps[0]?.instruction || ''}. 
+    Top-right (Step 2): ${makingSteps[1]?.instruction || ''}. 
+    Bottom-left (Step 3): ${makingSteps[2]?.instruction || ''}. 
+    Bottom-right (Step 4): ${makingSteps[3]?.instruction || ''}. 
+    No numbers, text, or graphic overlays on the image.`;
+
+    const stepsCompositeImage = await generateImageWithGemini(compositePrompt);
+    const slicedImageUrls = await sliceCompositeImage(stepsCompositeImage);
+
+    makingSteps.forEach((step, index) => {
+        if (slicedImageUrls[index]) step.image = slicedImageUrls[index];
+    });
+
+    currentItemProtocol.steps.push(...makingSteps);
+
+    // 3. Render the UI
+    document.getElementById('protocol-title').textContent = currentItemProtocol.title;
+    renderStepsGrid();
+    showPage('steps-page');
+}
+
+async function createDynamicFindingSteps(analysis, originalImageFile) {
+    showLoading('Generating acquisition steps...');
+    currentItemProtocol = {
+        title: `How to get ${analysis.itemName}`,
+        vendorName: analysis.vendorName,
+        originalImage: URL.createObjectURL(originalImageFile),
+        steps: []
+    };
+
+    const prompts = [
+        `A clean, modern logo or storefront for ${analysis.vendorName}, a place to get ${analysis.itemName}.`,
+        `A stylized icon representing a map with a pin drop, suggesting finding a location.`,
+        `An icon representing online ordering or delivery, like a smartphone with a shopping cart or a delivery truck.`,
+        `A person happily receiving or unboxing the ${analysis.itemName}.`
+    ];
+    
+    const instructions = [
+        `Identify a vendor. A popular choice is ${analysis.vendorName}.`,
+        `Find a nearby location using your favorite map application.`,
+        `Order for delivery or schedule a pickup.`,
+        `Receive your item and enjoy!`
+    ];
+    
+    const titles = ["Vendor", "Location", "Order", "Enjoy"];
+
+    const imagePromises = prompts.map(p => generateImageWithGemini(p));
+    const imageUrls = await Promise.all(imagePromises);
+
+    for (let i = 0; i < 4; i++) {
+        currentItemProtocol.steps.push({
+            id: i + 1,
+            title: titles[i],
+            instruction: instructions[i],
+            image: imageUrls[i],
+        });
+    }
+
+    document.getElementById('protocol-title').textContent = currentItemProtocol.title;
+    renderStepsGrid(true); // 'true' for find mode layout
+    showPage('steps-page');
+}
+
+
+function renderStepsGrid(isFindMode = false) {
+    const materialsDisplay = document.getElementById('materials-display');
+    const stepsGrid = document.getElementById('steps-grid');
+    materialsDisplay.innerHTML = '';
+    stepsGrid.innerHTML = '';
+
+    if (currentMode === 'make') {
+        const materialsStep = currentItemProtocol.steps.find(step => step.title === "Materials");
+        if (materialsStep) {
+            const card = document.createElement('div');
+            card.className = 'ingredients-card bg-white p-4 rounded-xl shadow-md flex flex-col items-center';
+            card.innerHTML = `
+                <img src="${currentItemProtocol.materialsImage}" alt="Materials" class="w-full h-48 object-cover rounded-lg mb-3">
+                <h3 class="text-lg font-semibold">${materialsStep.title}</h3>
+                <p class="text-sm text-gray-500">Click to hear list</p>
+                <div class="audio-icon mt-auto text-2xl text-gray-400">🔊</div>
+            `;
+            card.addEventListener('click', () => playStepAudio(materialsStep, card));
+            materialsDisplay.appendChild(card);
+        }
+    }
+
+    const itemSteps = currentMode === 'make' 
+        ? currentItemProtocol.steps.filter(step => step.title !== "Materials")
+        : currentItemProtocol.steps;
+
+    itemSteps.forEach(step => {
+        const card = document.createElement('div');
+        card.className = 'step-card bg-white p-4 rounded-xl shadow-md flex flex-col text-center';
+        card.innerHTML = `
+            <div class="relative">
+                <img src="${step.image}" alt="${step.title}" class="w-full h-40 object-cover rounded-lg mb-3">
+                <div class="absolute top-2 right-2 bg-black bg-opacity-50 text-white text-sm font-bold w-8 h-8 flex items-center justify-center rounded-full">${step.id}</div>
+            </div>
+            <h3 class="text-md font-semibold">${step.title}</h3>
+            <div class="audio-icon mt-auto text-xl text-gray-400">🔊</div>
+        `;
+        card.addEventListener('click', () => playStepAudio(step, card));
+        stepsGrid.appendChild(card);
+    });
+}
+
+
+// --- ANALYSIS & RESULTS ---
+function displayAnalysis(analysis, resultImageUrl) {
+    currentAnalysis = analysis;
+    document.getElementById('original-image').src = currentItemProtocol.originalImage;
+    document.getElementById('result-image').src = resultImageUrl;
+    
+    const radarLabels = currentMode === 'make'
+        ? ['Shape', 'Color', 'Details', 'Integrity', 'Match']
+        : ['Accuracy', 'Brand', 'Condition', 'Context', 'Similarity'];
         
-        // --- Event Listeners ---
-        generateImgBtn.addEventListener('click', handleImageGeneration);
-        generateTtsBtn.addEventListener('click', handleTtsGeneration);
-        
-        // --- Core Functions ---
-        async function handleImageGeneration() {
-            if (!GEMINI_API_KEY) {
-                imgStatusDiv.innerHTML = '<p class="text-red-500">错误: 请设置 GEMINI_API_KEY。</p>';
-                return;
+    const scores = currentMode === 'make'
+        ? [analysis.scores.shapeFidelity, analysis.scores.colorAccuracy, analysis.scores.detailComplexity, analysis.scores.structuralIntegrity, analysis.scores.overallMatch]
+        : [analysis.scores.itemAccuracy, analysis.scores.brandMatch, analysis.scores.condition, analysis.scores.context, analysis.scores.overallSimilarity];
+
+    generateRadarChart(radarLabels, scores);
+    generateScoreDetails(analysis.scores);
+    showPage('analysis-page');
+}
+
+
+function generateRadarChart(labels, data) {
+    const ctx = document.getElementById('radar-chart').getContext('2d');
+    if (window.radarChart) window.radarChart.destroy();
+    window.radarChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Your Score',
+                data: data,
+                backgroundColor: 'rgba(79, 70, 229, 0.2)',
+                borderColor: 'rgba(79, 70, 229, 1)',
+                borderWidth: 2,
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            scales: { r: { beginAtZero: true, max: 5, pointLabels: { font: { size: 14 } } } },
+            plugins: { legend: { display: false } }
+        }
+    });
+}
+
+function generateScoreDetails(scores) {
+    const scoreGrid = document.getElementById('score-details');
+    scoreGrid.innerHTML = '';
+    Object.entries(scores).forEach(([category, score]) => {
+        const scoreItem = document.createElement('div');
+        scoreItem.className = 'score-item p-2';
+        let colorClass = score >= 4 ? 'text-green-600' : score >= 3 ? 'text-yellow-600' : 'text-red-600';
+        // Simple camelCase to Title Case conversion
+        const label = category.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+        scoreItem.innerHTML = `
+            <div class="text-sm font-medium text-gray-500">${label}</div>
+            <div class="text-2xl font-bold ${colorClass}">${score}/5</div>`;
+        scoreGrid.appendChild(scoreItem);
+    });
+}
+
+
+// --- AUDIO & TTS ---
+function playStepAudio(step, element) {
+    if (currentPlayingStepElement && currentPlayingStepElement !== element) {
+        currentPlayingStepElement.classList.remove('playing');
+    }
+    
+    if (currentPlayingStepElement === element && !audioPlayer.paused) {
+        audioPlayer.pause();
+        element.classList.remove('playing');
+        currentPlayingStepElement = null;
+        return;
+    }
+
+    currentPlayingStepElement = element;
+    element.classList.add('playing');
+    
+    generateAndPlayTTS(step.instruction).catch(error => {
+        console.error("AI TTS failed. Potentially blocked by browser.", error);
+        alert("Could not play audio. Please ensure your browser allows autoplay.");
+        element.classList.remove('playing');
+    });
+}
+
+function playFeedback() {
+    if (!currentAnalysis) return;
+    generateAndPlayTTS(`Here is your feedback. ${currentAnalysis.feedback}`);
+}
+
+async function generateAndPlayTTS(text, voice = 'Puck') {
+    if (!text) return;
+    const payload = {
+        contents: [{ parts: [{ text: `Speak in a friendly, clear, and encouraging tone: ${text}` }] }],
+        generationConfig: {
+            responseModalities: ["AUDIO"],
+            speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } }
+        },
+        model: "gemini-2.5-flash-preview-tts"
+    };
+    const response = await fetch(`${CONFIG.GEMINI_TTS_API_URL}?key=${CONFIG.GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    if (!response.ok) throw new Error(`TTS API request failed: ${response.status}`);
+    const result = await response.json();
+    const part = result?.candidates?.[0]?.content?.parts?.[0];
+    const audioData = part?.inlineData?.data;
+    const mimeType = part?.inlineData?.mimeType;
+
+    if (audioData && mimeType?.startsWith("audio/")) {
+        const sampleRateMatch = mimeType.match(/rate=(\d+)/);
+        const sampleRate = sampleRateMatch ? parseInt(sampleRateMatch[1], 10) : 24000;
+        const pcmData = base64ToArrayBuffer(audioData);
+        const pcm16 = new Int16Array(pcmData);
+        const wavBlob = pcmToWav(pcm16, 1, sampleRate);
+        const audioUrl = URL.createObjectURL(wavBlob);
+        audioPlayer.src = audioUrl;
+        audioPlayer.play();
+    } else {
+        throw new Error("Invalid audio data in API response.");
+    }
+}
+
+
+// --- GEMINI API CALLS ---
+async function analyzeUploadedItemForMaking(imageFile) {
+    const base64Image = await fileToBase64(imageFile);
+    const prompt = `You are an expert maker. Look at this image. Identify the item. Your response must be in JSON format only. The JSON should contain: 'itemName' (a string, in English), 'materials' (an array of key material strings), and 'makingSteps' (an array of exactly 4 simple step objects, each with an 'id', 'title', and 'instruction'). For example: {"itemName": "Lego Starship", "materials": ["150 assorted Lego bricks", "Lego minifigure"], "makingSteps": [{"id":1, "title":"Build Body", "instruction":"Assemble the main body of the ship."}, ...]}.`;
+    const requestBody = { contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: imageFile.type, data: base64Image } }] }] };
+    const response = await fetch(`${CONFIG.GEMINI_TEXT_API_URL}?key=${CONFIG.GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody) });
+    if (!response.ok) throw new Error(`API request failed: ${response.status}`);
+    const data = await response.json();
+    const textResponse = data.candidates[0].content.parts[0].text;
+    return JSON.parse(textResponse.match(/\{[\s\S]*\}/)[0]);
+}
+
+async function analyzeUploadedItemForFinding(imageFile) {
+    const base64Image = await fileToBase64(imageFile);
+    const prompt = `You are a world-class scout. Look at this image. Identify the item and suggest a common brand or type of store where it can be found. Respond in JSON format only. The JSON must contain: 'itemName' (a string) and 'vendorName' (a string, e.g., "Starbucks", "The Home Depot", "Domino's Pizza"). For example: {"itemName": "Pepperoni Pizza", "vendorName": "Domino's Pizza"}.`;
+    const requestBody = { contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: imageFile.type, data: base64Image } }] }] };
+    const response = await fetch(`${CONFIG.GEMINI_TEXT_API_URL}?key=${CONFIG.GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody) });
+    if (!response.ok) throw new Error(`API request failed: ${response.status}`);
+    const data = await response.json();
+    const textResponse = data.candidates[0].content.parts[0].text;
+    return JSON.parse(textResponse.match(/\{[\s\S]*\}/)[0]);
+}
+
+async function analyzeResultWithGemini(imageFile, originalItem, mode) {
+    const base64Image = await fileToBase64(imageFile);
+    let prompt;
+    if (mode === 'make') {
+        prompt = `You are a meticulous inspector. Compare this user-submitted image of a creation with the original concept of a ${originalItem.title}. Rate the submission on a scale of 1-5 for the following criteria: shapeFidelity, colorAccuracy, detailComplexity, structuralIntegrity, and overallMatch. Also provide constructive feedback. Respond ONLY in JSON format: {"scores": {"shapeFidelity": 4, "colorAccuracy": 3, "detailComplexity": 5, "structuralIntegrity": 4, "overallMatch": 4}, "feedback": "Your detailed feedback here"}`;
+    } else { // find mode
+        prompt = `You are an authenticator. Compare this user-submitted image of a found item with the original concept of a ${originalItem.title} from ${originalItem.vendorName}. Rate the submission on a scale of 1-5 for the following criteria: itemAccuracy, brandMatch, condition, context (is it in a plausible place?), and overallSimilarity. Also provide constructive feedback. Respond ONLY in JSON format: {"scores": {"itemAccuracy": 5, "brandMatch": 4, "condition": 5, "context": 3, "overallSimilarity": 4}, "feedback": "Your detailed feedback here"}`;
+    }
+    const requestBody = { contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: imageFile.type, data: base64Image } }] }] };
+    const response = await fetch(`${CONFIG.GEMINI_TEXT_API_URL}?key=${CONFIG.GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody) });
+    if (!response.ok) throw new Error(`Analysis failed: ${response.status}`);
+    const data = await response.json();
+    const textResponse = data.candidates[0].content.parts[0].text;
+    return JSON.parse(textResponse.match(/\{[\s\S]*\}/)[0]);
+}
+
+async function generateImageWithGemini(prompt) {
+    try {
+        const payload = {
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { responseModalities: ['IMAGE'] }
+        };
+        const response = await fetch(`${CONFIG.GEMINI_IMAGE_API_URL}?key=${CONFIG.GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        if (!response.ok) throw new Error(`API request failed: ${response.status}`);
+        const result = await response.json();
+        const base64Data = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+        if (!base64Data) throw new Error('No image data in response.');
+        return `data:image/png;base64,${base64Data}`;
+    } catch (error) {
+        console.error('Image generation failed:', error);
+        // Fallback placeholder
+        const canvas = document.createElement('canvas');
+        canvas.width = 256; canvas.height = 256;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#e5e7eb'; ctx.fillRect(0, 0, 256, 256);
+        ctx.fillStyle = '#9ca3af'; ctx.font = '16px sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText('Image Failed to Load', 128, 128);
+        return canvas.toDataURL();
+    }
+}
+
+
+// --- HELPER FUNCTIONS ---
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+function sliceCompositeImage(imageUrl) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = () => {
+            const quadW = img.width / 2, quadH = img.height / 2;
+            const images = [];
+            for (let i = 0; i < 4; i++) {
+                const canvas = document.createElement('canvas');
+                canvas.width = quadW; canvas.height = quadH;
+                const ctx = canvas.getContext('2d');
+                const sx = (i % 2) * quadW, sy = Math.floor(i / 2) * quadH;
+                ctx.drawImage(img, sx, sy, quadW, quadH, 0, 0, quadW, quadH);
+                images.push(canvas.toDataURL());
             }
-            const userPrompt = imgPromptInput.value.trim();
-            if (!userPrompt) {
-                imgStatusDiv.innerHTML = '<p class="text-yellow-500">请输入图片提示词。</p>';
-                return;
-            }
+            resolve(images);
+        };
+        img.onerror = () => reject(new Error('Failed to load composite image for slicing.'));
+        img.src = imageUrl;
+    });
+}
 
-            setLoading(imgStatusDiv, '正在生成图片...');
-            generateImgBtn.disabled = true;
-            resultImage.classList.add('hidden');
-            placeholderText.classList.remove('hidden');
+function base64ToArrayBuffer(base64) {
+    const binaryString = window.atob(base64);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) bytes[i] = binaryString.charCodeAt(i);
+    return bytes.buffer;
+}
 
-            try {
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${GEMINI_API_KEY}`;
-                const payload = {
-                    contents: [{ parts: [{ text: userPrompt }] }],
-                    generationConfig: { responseModalities: ['IMAGE'] },
-                };
+function pcmToWav(pcmData, numChannels, sampleRate) {
+    const buffer = new ArrayBuffer(44 + pcmData.length * 2);
+    const view = new DataView(buffer);
+    const writeString = (view, offset, string) => { for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i)); };
+    writeString(view, 0, 'RIFF');
+    view.setUint32(4, 36 + pcmData.length * 2, true);
+    writeString(view, 8, 'WAVE');
+    writeString(view, 12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, numChannels, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * 2 * numChannels, true);
+    view.setUint16(32, numChannels * 2, true);
+    view.setUint16(34, 16, true);
+    writeString(view, 36, 'data');
+    view.setUint32(40, pcmData.length * 2, true);
+    for (let i = 0; i < pcmData.length; i++) view.setInt16(44 + i * 2, pcmData[i], true);
+    return new Blob([view], { type: 'audio/wav' });
+}
 
-                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                if (!response.ok) { const err = await response.json(); throw new Error(err.error.message); }
+function saveProtocolToFile() {
+    if (!currentItemProtocol) return alert('No protocol to save!');
+    
+    const materialsStep = currentItemProtocol.steps.find(s => s.title === "Materials");
+    const itemSteps = currentItemProtocol.steps.filter(s => s.title !== "Materials");
 
-                const result = await response.json();
-                const base64Data = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
-                if (!base64Data) throw new Error("API 返回的数据中没有找到图片。");
+    const stepsHtml = itemSteps.map(step => `
+        <div class="step">
+            <h3>Step ${step.id}: ${step.title}</h3>
+            <img src="${step.image}" alt="${step.title}">
+            <p>${step.instruction}</p>
+        </div>
+    `).join('');
 
-                const imageUrl = `data:image/png;base64,${base64Data}`;
-                resultImage.src = imageUrl;
-                resultImage.classList.remove('hidden');
-                placeholderText.classList.add('hidden');
-                
-                downloadLink(imageUrl, 'gemini-generated-image.png');
-                setSuccess(imgStatusDiv, '图片生成成功并已开始下载！');
-            } catch (error) {
-                setError(imgStatusDiv, `图片生成失败: ${error.message}`);
-            } finally {
-                generateImgBtn.disabled = false;
-            }
-        }
+    const fileContent = `
+    <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Protocol: ${currentItemProtocol.title}</title><style>body{font-family:sans-serif;max-width:800px;margin:2rem auto;padding:2rem;background:#f9fafb;border-radius:12px;box-shadow:0 4px 6px rgba(0,0,0,0.1);}h1,h2{color:#111827;}img{max-width:100%;border-radius:8px;margin-bottom:1rem;}.steps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1rem;}.step{background:white;padding:1rem;border-radius:8px;border:1px solid #e5e7eb;}</style></head><body>
+    <h1>${currentItemProtocol.title}</h1>
+    ${materialsStep ? `<h2>Materials</h2><img src="${currentItemProtocol.materialsImage}" alt="Materials"><p>${materialsStep.instruction}</p>` : ''}
+    <h2>Steps</h2><div class="steps-grid">${stepsHtml}</div>
+    </body></html>`;
 
-        async function handleTtsGeneration() {
-            if (!GEMINI_API_KEY) {
-                 setError(ttsStatusDiv, '错误: 请设置 GEMINI_API_KEY。');
-                return;
-            }
-            const text = ttsTextInput.value.trim();
-            const voice = voiceSelect.value;
-            if (!text) {
-                setStatus(ttsStatusDiv, '请输入要朗读的文本。', 'yellow');
-                return;
-            }
+    const blob = new Blob([fileContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = `protocol-${currentItemProtocol.title.toLowerCase().replace(/\s+/g, '-')}.html`;
+    link.href = url;
+    link.click();
+    URL.revokeObjectURL(url);
+}
 
-            setLoading(ttsStatusDiv, '正在生成语音...');
-            generateTtsBtn.disabled = true;
-            ttsAudio.classList.add('hidden');
-
-            try {
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${GEMINI_API_KEY}`;
-                const payload = {
-                    contents: [{ parts: [{ text: `朗读这段文字: ${text}` }] }],
-                    generationConfig: {
-                        responseModalities: ["AUDIO"],
-                        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } }
-                    },
-                    model: "gemini-2.5-flash-preview-tts"
-                };
-                
-                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                if (!response.ok) { const err = await response.json(); throw new Error(err.error.message); }
-
-                const result = await response.json();
-                const part = result?.candidates?.[0]?.content?.parts?.[0];
-                if (!part?.inlineData?.data) throw new Error("API 返回的数据中没有找到音频。");
-                
-                const sampleRate = parseInt(part.inlineData.mimeType.match(/rate=(\d+)/)[1], 10);
-                const pcmData = base64ToArrayBuffer(part.inlineData.data);
-                const pcm16 = new Int16Array(pcmData);
-                const wavBlob = pcmToWav(pcm16, 1, sampleRate);
-                const audioUrl = URL.createObjectURL(wavBlob);
-                
-                ttsAudio.src = audioUrl;
-                ttsAudio.classList.remove('hidden');
-                ttsAudio.play();
-                setSuccess(ttsStatusDiv, '语音生成成功！');
-
-            } catch (error) {
-                setError(ttsStatusDiv, `语音生成失败: ${error.message}`);
-            } finally {
-                generateTtsBtn.disabled = false;
-            }
-        }
-
-        // --- UI Helpers ---
-        function setLoading(element, message) {
-            element.innerHTML = `<div class="loader"></div><p class="ml-2">${message}</p>`;
-        }
-        function setSuccess(element, message) {
-            element.innerHTML = `<p class="text-green-500">${message}</p>`;
-        }
-        function setError(element, message) {
-            console.error(message);
-            element.innerHTML = `<p class="text-red-500">${message}</p>`;
-        }
-         function setStatus(element, message, color) {
-            element.innerHTML = `<p class="text-${color}-500">${message}</p>`;
-        }
-        
-        // --- Data Helpers ---
-        function downloadLink(href, filename) {
-            const link = document.createElement('a');
-            link.href = href;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-        
-        function base64ToArrayBuffer(base64) {
-            const binaryString = window.atob(base64);
-            const len = binaryString.length;
-            const bytes = new Uint8Array(len);
-            for (let i = 0; i < len; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
-            }
-            return bytes.buffer;
-        }
-
-        function pcmToWav(pcmData, numChannels, sampleRate) {
-            const buffer = new ArrayBuffer(44 + pcmData.length * 2);
-            const view = new DataView(buffer);
-            const writeString = (view, offset, string) => {
-                for (let i = 0; i < string.length; i++) {
-                    view.setUint8(offset + i, string.charCodeAt(i));
-                }
-            };
-            writeString(view, 0, 'RIFF');
-            view.setUint32(4, 36 + pcmData.length * 2, true);
-            writeString(view, 8, 'WAVE');
-            writeString(view, 12, 'fmt ');
-            view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true);
-            view.setUint16(22, numChannels, true);
-            view.setUint32(24, sampleRate, true);
-            view.setUint32(28, sampleRate * 2 * numChannels, true);
-            view.setUint16(32, numChannels * 2, true);
-            view.setUint16(34, 16, true);
-            writeString(view, 36, 'data');
-            view.setUint32(40, pcmData.length * 2, true);
-            for (let i = 0; i < pcmData.length; i++) {
-                view.setInt16(44 + i * 2, pcmData[i], true);
-            }
-            return new Blob([view], { type: 'audio/wav' });
-        }
-    </script>
+</script>
 </body>
 </html>
-

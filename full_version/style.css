@@ -1,0 +1,58 @@
+/* Custom Styles */
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.page {
+    display: none;
+    min-height: 100vh;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.page.active {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.upload-area {
+    border: 3px dashed #9ca3af;
+    transition: all 0.3s ease;
+}
+
+.upload-area.dragover {
+    border-color: #4f46e5;
+    background-color: #eef2ff;
+}
+
+.step-card, .ingredients-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.step-card:hover, .ingredients-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.step-card.playing, .ingredients-card.playing {
+    box-shadow: 0 0 0 4px #4f46e5;
+    transform: translateY(-2px);
+}
+
+.spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 4px solid #fff;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
