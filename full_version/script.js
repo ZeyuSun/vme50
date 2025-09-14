@@ -175,6 +175,7 @@ async function createDynamicProtocol(analysis, originalImageFile) {
     showLoading('Generating materials & steps...');
     currentItemProtocol = {
         title: analysis.itemName,
+        itemName: analysis.itemName, // Ensure itemName is set
         originalImage: URL.createObjectURL(originalImageFile),
         steps: []
     };
