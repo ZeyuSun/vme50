@@ -72,21 +72,20 @@ Then open http://localhost:8000
 
 ## 🌐 Browser Support
 
-✅ Chrome / Edge – Full support
+- ✅ Chrome / Edge – Full support
 
-✅ Firefox – Full support
+- ✅ Firefox – Full support
 
-✅ Safari – Full support
+- ✅ Safari – Full support
 
-✅ Mobile browsers – Optimized
+- ✅ Mobile browsers – Optimized
 
 ## 🔮 Future Enhancements
 
+- User accounts & saved searches
 
-* User accounts & saved searches
+- Social leaderboard for vision alignment scores
 
-* Social leaderboard for vision alignment scores
-
-* Multi-language & offline audio support
+- Multi-language & offline audio support
 
 # ✨ VME50 makes search visual, accessible, and creative.
