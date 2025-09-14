@@ -247,15 +247,21 @@ async function processResultFile(file) {
 }
 
 async function loadRecipe(recipeKey) {
+    // This function is now mainly for handling mock data.
+    // The main dynamic flow is in createDynamicRecipe.
     currentRecipe = JSON.parse(JSON.stringify(recipeData[recipeKey]));
     if (!currentRecipe) return;
 
     document.getElementById('recipe-title').textContent = currentRecipe.title;
     showLoading('Generating mock recipe steps...');
+
+    // Since mock data doesn't have a separate ingredients list, we create one.
     const ingredients = ["mock ingredient 1", "mock ingredient 2", "mock ingredient 3"];
     const ingredientsInstruction = `Gather all ingredients: ${ingredients.join(', ')}.`;
     const ingredientsStep = { id: 0, title: "Ingredients", instruction: ingredientsInstruction };
     currentRecipe.steps.unshift(ingredientsStep);
+
+    // For mock data, we just show placeholders as we don't generate images.
     hideLoading();
     generateStepsGrid();
     showPage('steps-page');
@@ -407,6 +413,19 @@ function playFeedback() {
 function showPage(pageId) {
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
+
+    if (pageId === 'steps-page') {
+        const uploadBtn = document.getElementById('upload-result-btn');
+        if (uploadBtn && !document.getElementById('save-recipe-btn')) {
+            const saveBtn = document.createElement('button');
+            saveBtn.id = 'save-recipe-btn';
+            saveBtn.className = uploadBtn.className;
+            saveBtn.textContent = 'Save Recipe';
+            saveBtn.style.marginLeft = '1rem';
+            saveBtn.addEventListener('click', saveRecipeToFile);
+            uploadBtn.parentNode.insertBefore(saveBtn, uploadBtn.nextSibling);
+        }
+    }
 }
 
 function showLoading(text) {
@@ -713,6 +732,69 @@ function analyzeResultWithData(analysis, imageUrl) {
     showPage('analysis-page');
 }
 
+async function saveRecipeToFile() {
+    if (!currentRecipe) {
+        alert('No recipe to save!');
+        return;
+    }
+
+    const ingredientsStep = currentRecipe.steps.find(s => s.title === "Ingredients");
+    const cookingSteps = currentRecipe.steps.filter(s => s.title !== "Ingredients");
+
+    const stepsHtml = cookingSteps.map(step => `
+        <div class="step">
+            <h3>Step ${step.id}: ${step.title}</h3>
+            <img src="${step.image}" alt="${step.title}">
+            <p>${step.instruction}</p>
+        </div>
+    `).join('');
+
+    const fileContent = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Recipe: ${currentRecipe.title}</title>
+        <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; background-color: #f0f2f5; color: #1c1e21; }
+            .container { max-width: 900px; margin: 2rem auto; background: #ffffff; padding: 2rem; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
+            h1, h2, h3 { color: #333; }
+            h1 { font-size: 2.5rem; text-align: center; margin-bottom: 1.5rem; }
+            h2 { font-size: 1.8rem; border-bottom: 2px solid #eee; padding-bottom: 0.5rem; margin-top: 2rem; }
+            h3 { font-size: 1.2rem; color: #555; }
+            p { line-height: 1.6; font-size: 1rem; }
+            img { max-width: 100%; height: auto; border-radius: 8px; margin-top: 1rem; margin-bottom: 1rem; }
+            .recipe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.5rem; }
+            .step { background: #f9f9f9; padding: 1.5rem; border-radius: 8px; border: 1px solid #ddd; }
+            @media (max-width: 768px) { .recipe-grid { grid-template-columns: 1fr; } }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>${currentRecipe.title}</h1>
+            
+            <h2>Ingredients</h2>
+            <img src="${currentRecipe.ingredientsImage}" alt="Ingredients for ${currentRecipe.title}">
+            <p>${ingredientsStep.instruction}</p>
+            
+            <h2>Steps</h2>
+            <div class="recipe-grid">
+                ${stepsHtml}
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+
+    const blob = new Blob([fileContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const filename = `recipe-${currentRecipe.title.toLowerCase().replace(/\s+/g, '-')}.html`;
+    downloadFile(url, filename);
+    URL.revokeObjectURL(url);
+}
+
+
 // Social Sharing and Save Functions
 async function createComparisonImage() {
     const canvas = document.createElement('canvas');
@@ -876,7 +958,7 @@ async function shareToFacebook() {
 async function saveToAlbum() {
     try {
         const imageDataUrl = await createComparisonImage();
-        downloadImage(imageDataUrl, `${currentRecipe.title.replace(/\s+/g, '-')}-cooking-analysis.png`);
+        downloadFile(imageDataUrl, `${currentRecipe.title.replace(/\s+/g, '-')}-cooking-analysis.png`);
         alert('Image downloaded to your Downloads folder!');
     } catch (error) {
         console.error('Save to album failed:', error);
@@ -887,16 +969,16 @@ async function saveToAlbum() {
 async function downloadComparison() {
     try {
         const imageDataUrl = await createComparisonImage();
-        downloadImage(imageDataUrl, `${currentRecipe.title.replace(/\s+/g, '-')}-comparison.png`);
+        downloadFile(imageDataUrl, `${currentRecipe.title.replace(/\s+/g, '-')}-comparison.png`);
     } catch (error) {
         console.error('Download failed:', error);
     }
 }
 
-function downloadImage(dataUrl, filename) {
+function downloadFile(url, filename) {
     const link = document.createElement('a');
     link.download = filename;
-    link.href = dataUrl;
+    link.href = url;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
