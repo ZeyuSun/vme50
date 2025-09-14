@@ -200,10 +200,10 @@ h3 {
 }
 
 .step-image {
-    width: 80px;
-    height: 80px;
+    width: 120px;
+    height: 120px;
     object-fit: cover;
-    border-radius: 50%;
+    border-radius: 15px;
     margin-bottom: 15px;
     border: 3px solid #667eea;
 }
@@ -358,6 +358,81 @@ h3 {
 .score-good { color: #ffc107; }
 .score-poor { color: #dc3545; }
 
+/* Sharing Section */
+.sharing-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    text-align: center;
+}
+
+.sharing-section h3 {
+    color: white;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.sharing-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.share-btn {
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 140px;
+    color: white;
+}
+
+.instagram-btn {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+
+.twitter-btn {
+    background: #1da1f2;
+}
+
+.facebook-btn {
+    background: #4267b2;
+}
+
+.save-btn {
+    background: #28a745;
+}
+
+.download-btn {
+    background: #6c757d;
+}
+
+.share-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.share-btn:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+    .sharing-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .share-btn {
+        width: 100%;
+        max-width: 250px;
+    }
+}
+
 /* Loading Overlay */
 .loading-overlay {
     position: fixed;
@@ -420,8 +495,8 @@ h3 {
     }
 
     .step-image {
-        width: 60px;
-        height: 60px;
+        width: 90px;
+        height: 90px;
     }
 
     .image-comparison {
