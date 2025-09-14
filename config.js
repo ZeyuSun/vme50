@@ -4,10 +4,10 @@
 
 const CONFIG = {
     // IMPORTANT: Replace with your actual Gemini API key
-    GEMINI_API_KEY: "", 
+    GEMINI_API_KEY: "AIzaSyDibV2f5h1NF_hKtzeAL9MSjvj7ft9hm_s", 
 
     // API endpoint for text-based analysis (e.g., analyzing uploaded food)
-    GEMINI_TEXT_API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-latest:generateContent',
+    GEMINI_TEXT_API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
     
     // API endpoint for image generation using the 'nano-banana' model
     GEMINI_IMAGE_API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent',

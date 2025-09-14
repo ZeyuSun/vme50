@@ -62,6 +62,9 @@ let audioPlayer = null;
 let currentPlayingStep = null;
 let imageCache = new Map(); // Cache for generated images
 
+// A simple delay function to add intervals between API requests
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 // Initialize image cache from local storage
 function initializeImageCache() {
     try {
@@ -197,17 +200,12 @@ async function processImageFile(file) {
     showLoading('Analyzing your image with AI...');
 
     try {
-        // Use Gemini to analyze the uploaded food image
         const analysis = await analyzeUploadedFood(file);
-
-        // Create dynamic recipe from AI analysis
         await createDynamicRecipe(analysis, file);
-
         hideLoading();
     } catch (error) {
         console.error('Image processing failed:', error);
         hideLoading();
-        // Fallback to mock behavior
         setTimeout(async () => {
             const recipes = Object.keys(recipeData);
             const randomRecipe = recipes[Math.floor(Math.random() * recipes.length)];
@@ -225,11 +223,9 @@ async function processResultFile(file) {
     showLoading('Analyzing your cooking result with AI...');
 
     try {
-        // Use Gemini to analyze the result
         const analysis = await analyzeResultWithGemini(file, currentRecipe);
-
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = (e) => {
             analyzeResultWithData(analysis, e.target.result);
             hideLoading();
         };
@@ -237,9 +233,8 @@ async function processResultFile(file) {
     } catch (error) {
         console.error('Result processing failed:', error);
         hideLoading();
-        // Fallback to mock behavior
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = (e) => {
             setTimeout(() => {
                 const qualities = ['good', 'okay', 'poor'];
                 const randomQuality = qualities[Math.floor(Math.random() * qualities.length)];
@@ -252,36 +247,38 @@ async function processResultFile(file) {
 }
 
 async function loadRecipe(recipeKey) {
-    currentRecipe = JSON.parse(JSON.stringify(recipeData[recipeKey])); // Deep copy to avoid modifying original mock data
+    currentRecipe = JSON.parse(JSON.stringify(recipeData[recipeKey]));
     if (!currentRecipe) return;
 
     document.getElementById('recipe-title').textContent = currentRecipe.title;
-
-    // Show loading while generating realistic step images
     showLoading('Generating realistic cooking steps...');
 
     try {
-        // Generate realistic images for each step
-        for (let i = 0; i < currentRecipe.steps.length; i++) {
-            const step = currentRecipe.steps[i];
-            const stepImage = await generateStepImage(step.instruction, step.title);
-            currentRecipe.steps[i].image = stepImage;
-        }
+        const ingredients = ["mock ingredient 1", "mock ingredient 2", "mock ingredient 3"]; // Mock ingredients for mock data
+        const ingredientsInstruction = `Gather all ingredients: ${ingredients.join(', ')}.`;
+        const ingredientsStep = { id: 0, title: "Ingredients", instruction: ingredientsInstruction };
+        currentRecipe.steps.unshift(ingredientsStep); 
 
+        const ingredientsImage = await generateImageWithGemini(`All ingredients for ${currentRecipe.title}`);
+        currentRecipe.ingredientsImage = ingredientsImage;
+        await delay(1000);
+
+        const stepInstructions = currentRecipe.steps.filter(s => s.title !== "Ingredients").slice(0, 4);
+        const compositePrompt = `Create a single image as a 2x2 grid detailing four cooking steps. Each quadrant should be a realistic photo. Top-left (1): ${stepInstructions[0]?.instruction}. Top-right (2): ${stepInstructions[1]?.instruction}. Bottom-left (3): ${stepInstructions[2]?.instruction}. Bottom-right (4): ${stepInstructions[3]?.instruction}. Do not include any numbers or text overlays on the image.`;
+        const stepsImage = await generateImageWithGemini(compositePrompt);
+        currentRecipe.compositeStepsImage = stepsImage;
+        
         hideLoading();
         generateStepsGrid();
         showPage('steps-page');
     } catch (error) {
-        console.error('Failed to generate step images:', error);
-        // Fallback to original behavior with realistic placeholders
-        currentRecipe.steps.forEach(step => {
-            step.image = createRealisticStepPlaceholder(step.title, step.instruction);
-        });
+        console.error('Failed to generate images for mock recipe:', error);
         hideLoading();
-        generateStepsGrid();
+        generateStepsGrid(); 
         showPage('steps-page');
     }
 }
+
 
 function generateStepsGrid() {
     const stepsGrid = document.getElementById('steps-grid');
@@ -289,53 +286,88 @@ function generateStepsGrid() {
     const ingredientsDisplay = document.getElementById('ingredients-display');
     ingredientsDisplay.innerHTML = '';
 
-    // Display ingredients image separately
     const ingredientsStep = currentRecipe.steps.find(step => step.title === "Ingredients");
     if (ingredientsStep) {
         const ingredientsCard = document.createElement('div');
         ingredientsCard.className = 'ingredients-card';
         ingredientsCard.innerHTML = `
-            <img src="${ingredientsStep.image}" alt="${ingredientsStep.title}" class="ingredients-image">
+            <img src="${currentRecipe.ingredientsImage || createRealisticStepPlaceholder('Ingredients', ingredientsStep.instruction)}" alt="${ingredientsStep.title}" class="ingredients-image">
             <div class="ingredients-title">${ingredientsStep.title}</div>
-            <div class="ingredients-time">⏱️ ${ingredientsStep.timeEstimate}</div>
+            <div class="ingredients-time">⏱️ ${ingredientsStep.timeEstimate || '5 min'}</div>
             <div class="audio-icon">🔊</div>
         `;
-        ingredientsCard.addEventListener('click', () => playStepAudio(ingredientsStep, ingredientsCard));
+        ingredientsCard.addEventListener('click', (e) => playStepAudio(ingredientsStep, e.currentTarget));
         ingredientsDisplay.appendChild(ingredientsCard);
     }
 
-    // Display other steps
-    currentRecipe.steps.filter(step => step.title !== "Ingredients").forEach((step) => {
-        const stepCard = document.createElement('div');
-        stepCard.className = 'step-card';
-        const timeEstimate = step.timeEstimate || estimateStepTime(step.instruction, step.title);
-        
-        stepCard.innerHTML = `
-            <div class="step-number">${step.id}</div>
-            <img src="${step.image}" alt="${step.title}" class="step-image">
-            <div class="step-title">${step.title}</div>
-            <div class="step-time">⏱️ ${timeEstimate}</div>
-            <div class="audio-icon">🔊</div>
-        `;
+    const cookingSteps = currentRecipe.steps.filter(step => step.title !== "Ingredients");
+    if (cookingSteps.length > 0) {
+        const allStepsCard = document.createElement('div');
+        allStepsCard.className = 'all-steps-card';
 
-        stepCard.addEventListener('click', () => playStepAudio(step, stepCard));
-        stepsGrid.appendChild(stepCard);
-    });
+        const compositeImage = document.createElement('img');
+        compositeImage.src = currentRecipe.compositeStepsImage || createRealisticStepPlaceholder('Cooking Steps', 'All steps combined');
+        compositeImage.alt = "All Cooking Steps";
+        compositeImage.className = 'composite-step-image';
+        allStepsCard.appendChild(compositeImage);
+
+        // Clickable header to toggle instructions
+        const instructionsHeader = document.createElement('h3');
+        instructionsHeader.className = 'instructions-header';
+        instructionsHeader.innerHTML = 'Cooking Steps <span>(Click to expand)</span>';
+        
+        const instructionsList = document.createElement('ol');
+        instructionsList.className = 'instructions-list';
+        instructionsList.style.display = 'none'; // Initially hidden
+
+        instructionsHeader.addEventListener('click', () => {
+            const isHidden = instructionsList.style.display === 'none';
+            instructionsList.style.display = isHidden ? 'block' : 'none';
+            instructionsHeader.querySelector('span').textContent = isHidden ? '(Click to collapse)' : '(Click to expand)';
+        });
+        
+        allStepsCard.appendChild(instructionsHeader);
+
+
+        cookingSteps.forEach(step => {
+            const timeEstimate = step.timeEstimate || estimateStepTime(step.instruction, step.title);
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `
+                <div class="step-instruction-text"><strong>Step ${step.id}:</strong> ${step.instruction}</div>
+                <div class="step-details"><span class="step-time">⏱️ ${timeEstimate}</span><div class="audio-icon small">🔊</div></div>
+            `;
+            listItem.addEventListener('click', (e) => {
+                e.stopPropagation();
+                playStepAudio(step, listItem);
+            });
+            instructionsList.appendChild(listItem);
+        });
+        allStepsCard.appendChild(instructionsList);
+        stepsGrid.appendChild(allStepsCard);
+    }
 }
 
-function playStepAudio(step, stepCard) {
-    if (currentPlayingStep) {
+function playStepAudio(step, element) {
+    // Remove 'playing' class from any other element before proceeding
+    if (currentPlayingStep && currentPlayingStep !== element) {
         currentPlayingStep.classList.remove('playing');
+    }
+    
+    // If the clicked element is already playing, pause and toggle off
+    if (currentPlayingStep === element && !audioPlayer.paused) {
         audioPlayer.pause();
+        element.classList.remove('playing');
+        currentPlayingStep = null;
+        return;
     }
 
-    currentPlayingStep = stepCard;
-    stepCard.classList.add('playing');
+    currentPlayingStep = element;
+    element.classList.add('playing');
 
     if (CONFIG.ENABLE_AI_TTS) {
         generateAndPlayTTS(step.instruction).catch(error => {
             console.error("AI TTS failed, falling back to browser TTS.", error);
-            speakText(step.instruction); // Fallback
+            speakText(step.instruction);
         });
     } else {
         speakText(step.instruction);
@@ -346,28 +378,21 @@ function playStepAudio(step, stepCard) {
 function speakText(text) {
     if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 0.9;
-        utterance.pitch = 1;
-        utterance.volume = 0.8;
-
         utterance.onend = () => {
             if (currentPlayingStep) {
                 currentPlayingStep.classList.remove('playing');
                 currentPlayingStep = null;
             }
         };
-        
-        speechSynthesis.cancel(); // Clear any previous utterances
+        speechSynthesis.cancel();
         speechSynthesis.speak(utterance);
     }
 }
 
 function analyzeResult(quality, imageUrl) {
     currentAnalysis = analysisData[quality];
-
     document.getElementById('original-image').src = currentRecipe.originalImage;
     document.getElementById('result-image').src = imageUrl;
-
     generateRadarChart(currentAnalysis.scores);
     generateScoreDetails(currentAnalysis.scores);
     showPage('analysis-page');
@@ -375,9 +400,7 @@ function analyzeResult(quality, imageUrl) {
 
 function generateRadarChart(scores) {
     const ctx = document.getElementById('radar-chart').getContext('2d');
-    if (window.radarChart) {
-        window.radarChart.destroy();
-    }
+    if (window.radarChart) window.radarChart.destroy();
     window.radarChart = new Chart(ctx, {
         type: 'radar',
         data: {
@@ -388,16 +411,10 @@ function generateRadarChart(scores) {
                 backgroundColor: 'rgba(102, 126, 234, 0.2)',
                 borderColor: 'rgba(102, 126, 234, 1)',
                 borderWidth: 2,
-                pointBackgroundColor: 'rgba(102, 126, 234, 1)',
-                pointBorderColor: '#fff',
-                pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: 'rgba(102, 126, 234, 1)'
             }]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { r: { beginAtZero: true, max: 5, ticks: { stepSize: 1 } } },
+            scales: { r: { beginAtZero: true, max: 5 } },
             plugins: { legend: { display: false } }
         }
     });
@@ -410,22 +427,21 @@ function generateScoreDetails(scores) {
         const scoreItem = document.createElement('div');
         scoreItem.className = 'score-item';
         let scoreClass = score >= 4 ? 'score-excellent' : score >= 3 ? 'score-good' : 'score-poor';
-        scoreItem.innerHTML = `
-            <div class="score-label">${category.charAt(0).toUpperCase() + category.slice(1)}</div>
-            <div class="score-value ${scoreClass}">${score}/5</div>`;
+        scoreItem.innerHTML = `<div class="score-label">${category.charAt(0).toUpperCase() + category.slice(1)}</div><div class="score-value ${scoreClass}">${score}/5</div>`;
         scoreGrid.appendChild(scoreItem);
     });
 }
 
 function playFeedback() {
     if (!currentAnalysis) return;
+    const text = `Here is your feedback. ${currentAnalysis.feedback}`;
     if (CONFIG.ENABLE_AI_TTS) {
-        generateAndPlayTTS(`Here is your feedback. ${currentAnalysis.feedback}`).catch(error => {
+        generateAndPlayTTS(text).catch(error => {
             console.error("AI TTS feedback failed, falling back to browser TTS.", error);
-            speakText(currentAnalysis.feedback);
+            speakText(text);
         });
     } else {
-        speakText(currentAnalysis.feedback);
+        speakText(text);
     }
 }
 
@@ -487,23 +503,24 @@ async function analyzeUploadedFood(imageFile) {
         console.log("AI analysis is disabled. Using mock data.");
         const recipes = Object.keys(recipeData);
         const randomRecipe = recipes[Math.floor(Math.random() * recipes.length)];
-        return { dishName: recipeData[randomRecipe].title, confidence: 0.5, cookingSteps: recipeData[randomRecipe].steps };
+        return { dishName: recipeData[randomRecipe].title, ingredients: ["mock ingredient 1", "mock ingredient 2"], cookingSteps: recipeData[randomRecipe].steps };
     }
     try {
         const base64Image = await fileToBase64(imageFile);
-        const requestBody = { contents: [{ parts: [ { text: "Analyze this food image and identify the dish. Respond ONLY in English. Provide a JSON response with: dishName (string, in English), confidence (0-1), and cookingSteps (array of 4-6 step objects with id, title, and instruction). Focus on common, recognizable dishes. Example format: {\"dishName\": \"Pizza\", \"confidence\": 0.9, \"cookingSteps\": [{\"id\": 1, \"title\": \"Preheat\", \"instruction\": \"Preheat oven to 450°F\"}, ...]}" }, { inline_data: { mime_type: imageFile.type, data: base64Image } } ] }] };
+        const prompt = `You are an expert chef. Look at this image of a food dish. Identify the most likely name of the dish. Your response must be in JSON format only. The JSON should contain: 'dishName' (a string, in English), 'ingredients' (an array of key ingredient strings), and 'cookingSteps' (an array of 4 to 6 simple step objects, each with an 'id', 'title', and 'instruction'). For example: {"dishName": "Spaghetti Carbonara", "ingredients": ["spaghetti", "eggs", "pecorino cheese", "guanciale", "black pepper"], "cookingSteps": [...]}. Only identify common, well-known dishes.`;
+        const requestBody = { contents: [{ parts: [ { text: prompt }, { inline_data: { mime_type: imageFile.type, data: base64Image } } ] }] };
         const response = await fetch(`${CONFIG.GEMINI_TEXT_API_URL}?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody) });
         if (!response.ok) throw new Error(`API request failed: ${response.status}`);
         const data = await response.json();
         const textResponse = data.candidates[0].content.parts[0].text;
         const jsonMatch = textResponse.match(/\{[\s\S]*\}/);
         if (jsonMatch) return JSON.parse(jsonMatch[0]);
-        throw new Error('Invalid response format');
+        throw new Error('Invalid JSON response from AI');
     } catch (error) {
         console.error('Food analysis failed:', error);
         const recipes = Object.keys(recipeData);
         const randomRecipe = recipes[Math.floor(Math.random() * recipes.length)];
-        return { dishName: recipeData[randomRecipe].title, confidence: 0.5, cookingSteps: recipeData[randomRecipe].steps };
+        return { dishName: recipeData[randomRecipe].title, ingredients: ["mock ingredient 1", "mock ingredient 2"], cookingSteps: recipeData[randomRecipe].steps };
     }
 }
 
@@ -513,11 +530,9 @@ async function generateStepImage(instruction, stepTitle) {
     }
     const cacheKey = `${stepTitle}-${instruction}`;
     if (imageCache.has(cacheKey)) {
-        console.log('Using cached image for:', stepTitle);
         return imageCache.get(cacheKey);
     }
     try {
-        console.log('Generating image for step:', stepTitle);
         const imagePrompt = `Generate a realistic, high-quality photograph of a cooking step: ${instruction}. Show the actual cooking process in a clean, modern kitchen. Professional food photography style with good lighting, sharp focus, and appetizing presentation. No text, labels, or overlays in the image. Focus on the hands, ingredients, and cooking tools performing the specific action described.`;
         const generatedImage = await generateImageWithGemini(imagePrompt);
         imageCache.set(cacheKey, generatedImage);
@@ -528,14 +543,13 @@ async function generateStepImage(instruction, stepTitle) {
         } catch (storageError) { console.log('Could not save to local storage:', storageError); }
         return generatedImage;
     } catch (error) {
-        console.error('Image generation failed for step:', stepTitle, '- error:', error);
+        console.error(`Image generation failed for step: ${stepTitle}`, error);
         return createRealisticStepPlaceholder(stepTitle, instruction);
     }
 }
 
 async function generateImageWithGemini(prompt) {
     try {
-        console.log('Generating image with nano-banana for prompt:', prompt);
         const payload = { 
             contents: [{ parts: [{ text: prompt }] }], 
             generationConfig: { responseModalities: ['IMAGE'] } 
@@ -544,12 +558,9 @@ async function generateImageWithGemini(prompt) {
         if (!response.ok) { const errorBody = await response.text(); throw new Error(`API request failed with status ${response.status}: ${errorBody}`); }
         const result = await response.json();
         const base64Data = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
-        if (!base64Data) { console.error('No image data found in API response:', result); throw new Error('No image data found in API response.'); }
+        if (!base64Data) { throw new Error('No image data found in API response.'); }
         const imageUrl = `data:image/png;base64,${base64Data}`;
-        // ADDED LOGGING
-        console.log('--- Image generated ---');
-        console.log('Temporary Data URL (truncated):', `${imageUrl.substring(0, 100)}...`);
-        console.log('This is a temporary in-memory URL used by the browser. It does not correspond to a file on your disk.');
+        console.log(`Image generated for prompt "${prompt.substring(0,30)}..."`);
         return imageUrl;
     } catch (error) {
         console.error('Image generation with Gemini failed:', error);
@@ -557,10 +568,8 @@ async function generateImageWithGemini(prompt) {
     }
 }
 
-
 async function analyzeResultWithGemini(imageFile, originalRecipe) {
      if (!CONFIG.ENABLE_AI_ANALYSIS) {
-        console.log("AI analysis is disabled. Using mock data.");
         const qualities = ['good', 'okay', 'poor'];
         const randomQuality = qualities[Math.floor(Math.random() * qualities.length)];
         return { scores: analysisData[randomQuality].scores, feedback: analysisData[randomQuality].feedback, overall: randomQuality };
@@ -584,15 +593,14 @@ async function analyzeResultWithGemini(imageFile, originalRecipe) {
 }
 
 // --- TTS FUNCTIONS ---
-async function generateAndPlayTTS(text) {
+async function generateAndPlayTTS(text, voice = 'Puck') {
     if (!text) return;
-    console.log("Generating AI TTS for:", text);
 
     const payload = {
         contents: [{ parts: [{ text: `Speak in a friendly, clear, and encouraging tone: ${text}` }] }],
         generationConfig: {
             responseModalities: ["AUDIO"],
-            speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Puck" } } }
+            speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } }
         },
         model: "gemini-2.5-flash-preview-tts"
     };
@@ -614,17 +622,11 @@ async function generateAndPlayTTS(text) {
         if (audioData && mimeType?.startsWith("audio/")) {
             const sampleRateMatch = mimeType.match(/rate=(\d+)/);
             const sampleRate = sampleRateMatch ? parseInt(sampleRateMatch[1], 10) : 24000;
-            
             const pcmData = base64ToArrayBuffer(audioData);
             const pcm16 = new Int16Array(pcmData);
             const wavBlob = pcmToWav(pcm16, 1, sampleRate);
             const audioUrl = URL.createObjectURL(wavBlob);
             
-            // ADDED LOGGING
-            console.log('--- TTS audio generated ---');
-            console.log('Temporary Object URL:', audioUrl);
-            console.log('This is a temporary in-memory URL used by the browser. It does not correspond to a file on your disk.');
-
             audioPlayer.src = audioUrl;
             audioPlayer.play();
         } else {
@@ -632,7 +634,6 @@ async function generateAndPlayTTS(text) {
         }
     } catch (error) {
         console.error("Error in generateAndPlayTTS:", error);
-        // Fallback to browser TTS if AI fails
         speakText(text);
     }
 }
@@ -650,6 +651,11 @@ function base64ToArrayBuffer(base64) {
 function pcmToWav(pcmData, numChannels, sampleRate) {
     const buffer = new ArrayBuffer(44 + pcmData.length * 2);
     const view = new DataView(buffer);
+    const writeString = (view, offset, string) => {
+        for (let i = 0; i < string.length; i++) {
+            view.setUint8(offset + i, string.charCodeAt(i));
+        }
+    };
     writeString(view, 0, 'RIFF');
     view.setUint32(4, 36 + pcmData.length * 2, true);
     writeString(view, 8, 'WAVE');
@@ -667,12 +673,6 @@ function pcmToWav(pcmData, numChannels, sampleRate) {
         view.setInt16(44 + i * 2, pcmData[i], true);
     }
     return new Blob([view], { type: 'audio/wav' });
-}
-
-function writeString(view, offset, string) {
-    for (let i = 0; i < string.length; i++) {
-        view.setUint8(offset + i, string.charCodeAt(i));
-    }
 }
 // --- END OF TTS FUNCTIONS ---
 
@@ -697,24 +697,39 @@ async function createDynamicRecipe(analysis, originalImageFile) {
             steps: []
         };
 
+        await delay(1000); // Wait after analysis before image generation
+
         showLoading('Generating ingredients image...');
-        const ingredientsPrompt = `Generate a realistic, high-quality photograph showing all the ingredients needed to make ${analysis.dishName}. Display ingredients neatly arranged on a clean kitchen counter or cutting board. Professional food photography style with good lighting and sharp focus. Show fresh, appetizing ingredients laid out ready for cooking. No text or labels in the image.`;
+        const ingredientsList = (analysis.ingredients || []).join(', ');
+        const ingredientsPrompt = `Generate a realistic, high-quality photograph showing all the ingredients needed to make ${analysis.dishName}: ${ingredientsList}. Display ingredients neatly arranged on a clean kitchen counter or cutting board. Professional food photography style with good lighting and sharp focus. Show fresh, appetizing ingredients laid out ready for cooking. No text or labels in the image.`;
         const ingredientsImage = await generateImageWithGemini(ingredientsPrompt);
         
+        dynamicRecipe.ingredientsImage = ingredientsImage;
+        
+        const ingredientsInstruction = `First, gather your ingredients: ${ingredientsList}.`;
         dynamicRecipe.steps.push({
             id: 0,
             title: "Ingredients",
-            image: ingredientsImage,
-            instruction: `Gather all ingredients needed for ${analysis.dishName}.`,
+            instruction: ingredientsInstruction,
             timeEstimate: "5 minutes"
         });
+        
+        await delay(1000);
 
         showLoading('Generating step-by-step cooking images...');
-        for (const step of analysis.cookingSteps) {
-            const stepImage = await generateStepImage(step.instruction, step.title);
-            const timeEstimate = estimateStepTime(step.instruction, step.title);
-            dynamicRecipe.steps.push({ ...step, image: stepImage, timeEstimate });
-        }
+        
+        const cookingSteps = analysis.cookingSteps.slice(0, 4);
+        const compositePrompt = `Create a single image as a 2x2 grid detailing four cooking steps for making ${analysis.dishName}. Each quadrant should be a realistic, appetizing photo. 
+        Top-left (Step 1): ${cookingSteps[0]?.instruction || ''}. 
+        Top-right (Step 2): ${cookingSteps[1]?.instruction || ''}. 
+        Bottom-left (Step 3): ${cookingSteps[2]?.instruction || ''}. 
+        Bottom-right (Step 4): ${cookingSteps[3]?.instruction || ''}. 
+        Do not include any numbers, text, or graphic overlays on the image itself.`;
+
+        const stepsImage = await generateImageWithGemini(compositePrompt);
+        dynamicRecipe.compositeStepsImage = stepsImage;
+        
+        dynamicRecipe.steps.push(...analysis.cookingSteps);
 
         currentRecipe = dynamicRecipe;
         document.getElementById('recipe-title').textContent = currentRecipe.title;
@@ -730,6 +745,7 @@ async function createDynamicRecipe(analysis, originalImageFile) {
         await loadRecipe(randomRecipe);
     }
 }
+
 
 function analyzeResultWithData(analysis, imageUrl) {
     currentAnalysis = {
