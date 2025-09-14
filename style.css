@@ -169,6 +169,44 @@ h3 {
 }
 
 /* Steps Grid */
+.ingredients-display {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.ingredients-card {
+    background: rgba(255,255,255,0.95);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 500px;
+    margin: 0 auto 20px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.ingredients-image {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    border: 3px solid #667eea;
+}
+
+.ingredients-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.ingredients-time {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 15px;
+}
+
 .steps-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -216,6 +254,12 @@ h3 {
     font-size: 1.1rem;
     font-weight: 600;
     margin-bottom: 5px;
+}
+
+.step-time {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 5px;
 }
 
 .step-number {

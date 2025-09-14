@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini 多功能测试页</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto p-6 my-10 bg-white rounded-lg shadow-xl max-w-2xl">
+        <h1 class="text-3xl font-bold mb-6 text-center text-gray-900">Gemini 多功能测试页</h1>
+
+        <!-- Section: Image Generation -->
+        <div class="border rounded-lg p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-center">1. 图片生成测试</h2>
+            <div class="mb-4">
+                <label for="img-prompt" class="block text-sm font-medium text-gray-700 mb-2">图片提示词:</label>
+                <textarea id="img-prompt" rows="3" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="例如：一只穿着宇航服的猫在月球上吃披萨"></textarea>
+            </div>
+            <button id="generate-img-btn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition duration-300">
+                生成并下载图片
+            </button>
+            <div id="img-status" class="mt-4 text-center flex items-center justify-center h-8"></div>
+            <div class="mt-4 bg-gray-200 rounded-md h-64 flex items-center justify-center">
+                <img id="result-image" src="" alt="生成的图片" class="max-w-full max-h-full rounded-md hidden">
+                <p id="placeholder-text" class="text-gray-500">图片将在这里显示</p>
+            </div>
+        </div>
+
+        <!-- Section: TTS Generation -->
+        <div class="border rounded-lg p-6">
+            <h2 class="text-2xl font-semibold mb-4 text-center">2. 语音生成 (TTS) 测试</h2>
+            <div class="mb-4">
+                <label for="tts-text" class="block text-sm font-medium text-gray-700 mb-2">要朗读的文本:</label>
+                <textarea id="tts-text" rows="3" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500" placeholder="例如：你好，世界！今天天气真好。"></textarea>
+            </div>
+             <div class="mb-4">
+                <label for="voice-select" class="block text-sm font-medium text-gray-700 mb-2">选择声音:</label>
+                <select id="voice-select" class="w-full p-2 border border-gray-300 rounded-md">
+                    <option value="Puck">Puck (男声, 活泼)</option>
+                    <option value="Kore">Kore (女声, 坚定)</option>
+                    <option value="Zephyr">Zephyr (女声, 明亮)</option>
+                    <option value="Charon">Charon (男声, 信息丰富)</option>
+                    <option value="Leda">Leda (女声, 年轻)</option>
+                    <option value="Orus">Orus (男声, 坚定)</option>
+                    <option value="Sadaltager">Sadaltager (男声, 博学)</option>
+                    <option value="Vindemiatrix">Vindemiatrix (女声, 温柔)</option>
+                </select>
+            </div>
+            <button id="generate-tts-btn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-md transition duration-300">
+                生成并播放语音
+            </button>
+            <div id="tts-status" class="mt-4 text-center flex items-center justify-center h-8"></div>
+            <audio id="tts-audio" controls class="w-full mt-4 hidden"></audio>
+        </div>
+    </div>
+
+    <script>
+        // *******************************************************************
+        // !! 重要 !!: 请在这里填入你的 Gemini API Key
+        // *******************************************************************
+        const GEMINI_API_KEY = "AIzaSyDibV2f5h1NF_hKtzeAL9MSjvj7ft9hm_s"; // 替换成你的 API Key
+
+        // --- DOM Elements ---
+        const generateImgBtn = document.getElementById('generate-img-btn');
+        const imgPromptInput = document.getElementById('img-prompt');
+        const imgStatusDiv = document.getElementById('img-status');
+        const resultImage = document.getElementById('result-image');
+        const placeholderText = document.getElementById('placeholder-text');
+
+        const generateTtsBtn = document.getElementById('generate-tts-btn');
+        const ttsTextInput = document.getElementById('tts-text');
+        const voiceSelect = document.getElementById('voice-select');
+        const ttsStatusDiv = document.getElementById('tts-status');
+        const ttsAudio = document.getElementById('tts-audio');
+        
+        // --- Event Listeners ---
+        generateImgBtn.addEventListener('click', handleImageGeneration);
+        generateTtsBtn.addEventListener('click', handleTtsGeneration);
+        
+        // --- Core Functions ---
+        async function handleImageGeneration() {
+            if (!GEMINI_API_KEY) {
+                imgStatusDiv.innerHTML = '<p class="text-red-500">错误: 请设置 GEMINI_API_KEY。</p>';
+                return;
+            }
+            const userPrompt = imgPromptInput.value.trim();
+            if (!userPrompt) {
+                imgStatusDiv.innerHTML = '<p class="text-yellow-500">请输入图片提示词。</p>';
+                return;
+            }
+
+            setLoading(imgStatusDiv, '正在生成图片...');
+            generateImgBtn.disabled = true;
+            resultImage.classList.add('hidden');
+            placeholderText.classList.remove('hidden');
+
+            try {
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${GEMINI_API_KEY}`;
+                const payload = {
+                    contents: [{ parts: [{ text: userPrompt }] }],
+                    generationConfig: { responseModalities: ['IMAGE'] },
+                };
+
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) { const err = await response.json(); throw new Error(err.error.message); }
+
+                const result = await response.json();
+                const base64Data = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+                if (!base64Data) throw new Error("API 返回的数据中没有找到图片。");
+
+                const imageUrl = `data:image/png;base64,${base64Data}`;
+                resultImage.src = imageUrl;
+                resultImage.classList.remove('hidden');
+                placeholderText.classList.add('hidden');
+                
+                downloadLink(imageUrl, 'gemini-generated-image.png');
+                setSuccess(imgStatusDiv, '图片生成成功并已开始下载！');
+            } catch (error) {
+                setError(imgStatusDiv, `图片生成失败: ${error.message}`);
+            } finally {
+                generateImgBtn.disabled = false;
+            }
+        }
+
+        async function handleTtsGeneration() {
+            if (!GEMINI_API_KEY) {
+                 setError(ttsStatusDiv, '错误: 请设置 GEMINI_API_KEY。');
+                return;
+            }
+            const text = ttsTextInput.value.trim();
+            const voice = voiceSelect.value;
+            if (!text) {
+                setStatus(ttsStatusDiv, '请输入要朗读的文本。', 'yellow');
+                return;
+            }
+
+            setLoading(ttsStatusDiv, '正在生成语音...');
+            generateTtsBtn.disabled = true;
+            ttsAudio.classList.add('hidden');
+
+            try {
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${GEMINI_API_KEY}`;
+                const payload = {
+                    contents: [{ parts: [{ text: `朗读这段文字: ${text}` }] }],
+                    generationConfig: {
+                        responseModalities: ["AUDIO"],
+                        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } }
+                    },
+                    model: "gemini-2.5-flash-preview-tts"
+                };
+                
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) { const err = await response.json(); throw new Error(err.error.message); }
+
+                const result = await response.json();
+                const part = result?.candidates?.[0]?.content?.parts?.[0];
+                if (!part?.inlineData?.data) throw new Error("API 返回的数据中没有找到音频。");
+                
+                const sampleRate = parseInt(part.inlineData.mimeType.match(/rate=(\d+)/)[1], 10);
+                const pcmData = base64ToArrayBuffer(part.inlineData.data);
+                const pcm16 = new Int16Array(pcmData);
+                const wavBlob = pcmToWav(pcm16, 1, sampleRate);
+                const audioUrl = URL.createObjectURL(wavBlob);
+                
+                ttsAudio.src = audioUrl;
+                ttsAudio.classList.remove('hidden');
+                ttsAudio.play();
+                setSuccess(ttsStatusDiv, '语音生成成功！');
+
+            } catch (error) {
+                setError(ttsStatusDiv, `语音生成失败: ${error.message}`);
+            } finally {
+                generateTtsBtn.disabled = false;
+            }
+        }
+
+        // --- UI Helpers ---
+        function setLoading(element, message) {
+            element.innerHTML = `<div class="loader"></div><p class="ml-2">${message}</p>`;
+        }
+        function setSuccess(element, message) {
+            element.innerHTML = `<p class="text-green-500">${message}</p>`;
+        }
+        function setError(element, message) {
+            console.error(message);
+            element.innerHTML = `<p class="text-red-500">${message}</p>`;
+        }
+         function setStatus(element, message, color) {
+            element.innerHTML = `<p class="text-${color}-500">${message}</p>`;
+        }
+        
+        // --- Data Helpers ---
+        function downloadLink(href, filename) {
+            const link = document.createElement('a');
+            link.href = href;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        function base64ToArrayBuffer(base64) {
+            const binaryString = window.atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        function pcmToWav(pcmData, numChannels, sampleRate) {
+            const buffer = new ArrayBuffer(44 + pcmData.length * 2);
+            const view = new DataView(buffer);
+            const writeString = (view, offset, string) => {
+                for (let i = 0; i < string.length; i++) {
+                    view.setUint8(offset + i, string.charCodeAt(i));
+                }
+            };
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, 36 + pcmData.length * 2, true);
+            writeString(view, 8, 'WAVE');
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, numChannels, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2 * numChannels, true);
+            view.setUint16(32, numChannels * 2, true);
+            view.setUint16(34, 16, true);
+            writeString(view, 36, 'data');
+            view.setUint32(40, pcmData.length * 2, true);
+            for (let i = 0; i < pcmData.length; i++) {
+                view.setInt16(44 + i * 2, pcmData[i], true);
+            }
+            return new Blob([view], { type: 'audio/wav' });
+        }
+    </script>
+</body>
+</html>
+

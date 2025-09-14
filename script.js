@@ -4,123 +4,33 @@ const recipeData = {
         title: "Homemade Pizza",
         originalImage: "assets/samples/pizza.jpg",
         steps: [
-            {
-                id: 1,
-                title: "Preheat",
-                image: "assets/steps/preheat.png",
-                audio: "assets/audio/preheat.mp3",
-                instruction: "Preheat oven to 450°F"
-            },
-            {
-                id: 2,
-                title: "Roll Dough",
-                image: "assets/steps/dough.png",
-                audio: "assets/audio/roll-dough.mp3",
-                instruction: "Roll out pizza dough on floured surface"
-            },
-            {
-                id: 3,
-                title: "Add Sauce",
-                image: "assets/steps/sauce.png",
-                audio: "assets/audio/add-sauce.mp3",
-                instruction: "Spread tomato sauce evenly"
-            },
-            {
-                id: 4,
-                title: "Add Cheese",
-                image: "assets/steps/cheese.png",
-                audio: "assets/audio/add-cheese.mp3",
-                instruction: "Sprinkle mozzarella cheese generously"
-            },
-            {
-                id: 5,
-                title: "Add Toppings",
-                image: "assets/steps/toppings.png",
-                audio: "assets/audio/add-toppings.mp3",
-                instruction: "Add your favorite toppings"
-            },
-            {
-                id: 6,
-                title: "Bake",
-                image: "assets/steps/bake.png",
-                audio: "assets/audio/bake.mp3",
-                instruction: "Bake for 12-15 minutes until golden"
-            }
+            { id: 1, title: "Preheat", image: "assets/steps/preheat.png", instruction: "Preheat oven to 450°F" },
+            { id: 2, title: "Roll Dough", image: "assets/steps/dough.png", instruction: "Roll out pizza dough on floured surface" },
+            { id: 3, title: "Add Sauce", image: "assets/steps/sauce.png", instruction: "Spread tomato sauce evenly" },
+            { id: 4, title: "Add Cheese", image: "assets/steps/cheese.png", instruction: "Sprinkle mozzarella cheese generously" },
+            { id: 5, title: "Add Toppings", image: "assets/steps/toppings.png", instruction: "Add your favorite toppings" },
+            { id: 6, title: "Bake", image: "assets/steps/bake.png", instruction: "Bake for 12-15 minutes until golden" }
         ]
     },
     coffee: {
         title: "Perfect Coffee",
         originalImage: "assets/samples/coffee.jpg",
         steps: [
-            {
-                id: 1,
-                title: "Boil Water",
-                image: "assets/steps/boil.png",
-                audio: "assets/audio/boil-water.mp3",
-                instruction: "Boil water to 200°F"
-            },
-            {
-                id: 2,
-                title: "Grind Beans",
-                image: "assets/steps/grind.png",
-                audio: "assets/audio/grind-beans.mp3",
-                instruction: "Grind coffee beans to medium coarse"
-            },
-            {
-                id: 3,
-                title: "Add Coffee",
-                image: "assets/steps/add-coffee.png",
-                audio: "assets/audio/add-coffee.mp3",
-                instruction: "Add ground coffee to filter"
-            },
-            {
-                id: 4,
-                title: "Pour & Enjoy",
-                image: "assets/steps/pour.png",
-                audio: "assets/audio/pour-enjoy.mp3",
-                instruction: "Pour hot water slowly and enjoy"
-            }
+            { id: 1, title: "Boil Water", image: "assets/steps/boil.png", instruction: "Boil water to 200°F" },
+            { id: 2, title: "Grind Beans", image: "assets/steps/grind.png", instruction: "Grind coffee beans to medium coarse" },
+            { id: 3, title: "Add Coffee", image: "assets/steps/add-coffee.png", instruction: "Add ground coffee to filter" },
+            { id: 4, title: "Pour & Enjoy", image: "assets/steps/pour.png", instruction: "Pour hot water slowly and enjoy" }
         ]
     },
     sandwich: {
         title: "Gourmet Sandwich",
         originalImage: "assets/samples/sandwich.jpg",
         steps: [
-            {
-                id: 1,
-                title: "Toast Bread",
-                image: "assets/steps/toast.png",
-                audio: "assets/audio/toast-bread.mp3",
-                instruction: "Toast bread slices until golden"
-            },
-            {
-                id: 2,
-                title: "Add Spread",
-                image: "assets/steps/spread.png",
-                audio: "assets/audio/add-spread.mp3",
-                instruction: "Apply mayo or mustard"
-            },
-            {
-                id: 3,
-                title: "Layer Meat",
-                image: "assets/steps/meat.png",
-                audio: "assets/audio/layer-meat.mp3",
-                instruction: "Add sliced turkey or ham"
-            },
-            {
-                id: 4,
-                title: "Add Veggies",
-                image: "assets/steps/veggies.png",
-                audio: "assets/audio/add-veggies.mp3",
-                instruction: "Layer lettuce, tomato, and cheese"
-            },
-            {
-                id: 5,
-                title: "Assemble",
-                image: "assets/steps/assemble.png",
-                audio: "assets/audio/assemble.mp3",
-                instruction: "Close sandwich and cut diagonally"
-            }
+            { id: 1, title: "Toast Bread", image: "assets/steps/toast.png", instruction: "Toast bread slices until golden" },
+            { id: 2, title: "Add Spread", image: "assets/steps/spread.png", instruction: "Apply mayo or mustard" },
+            { id: 3, title: "Layer Meat", image: "assets/steps/meat.png", instruction: "Add sliced turkey or ham" },
+            { id: 4, title: "Add Veggies", image: "assets/steps/veggies.png", instruction: "Layer lettuce, tomato, and cheese" },
+            { id: 5, title: "Assemble", image: "assets/steps/assemble.png", instruction: "Close sandwich and cut diagonally" }
         ]
     }
 };
@@ -129,24 +39,21 @@ const recipeData = {
 const analysisData = {
     good: {
         scores: { color: 5, texture: 4, ingredients: 5, presentation: 4, portion: 4 },
-        feedback: "Excellent work! Your pizza looks delicious with perfect golden color and great cheese coverage.",
-        audioFile: "assets/audio/feedback-excellent.mp3"
+        feedback: "Excellent work! Your pizza looks delicious with perfect golden color and great cheese coverage."
     },
     okay: {
         scores: { color: 3, texture: 4, ingredients: 3, presentation: 3, portion: 4 },
-        feedback: "Good effort! Try adding more cheese next time and watch the oven temperature for better color.",
-        audioFile: "assets/audio/feedback-good.mp3"
+        feedback: "Good effort! Try adding more cheese next time and watch the oven temperature for better color."
     },
     poor: {
         scores: { color: 2, texture: 2, ingredients: 2, presentation: 2, portion: 3 },
-        feedback: "Keep practicing! The crust needs more time and try spreading ingredients more evenly.",
-        audioFile: "assets/audio/feedback-practice.mp3"
+        feedback: "Keep practicing! The crust needs more time and try spreading ingredients more evenly."
     }
 };
 
+
 // Gemini API Configuration (loaded from config.js)
 const GEMINI_API_KEY = CONFIG.GEMINI_API_KEY;
-const GEMINI_API_URL = CONFIG.GEMINI_API_URL;
 
 // Global Variables
 let currentRecipe = null;
@@ -155,6 +62,22 @@ let audioPlayer = null;
 let currentPlayingStep = null;
 let imageCache = new Map(); // Cache for generated images
 
+// Initialize image cache from local storage
+function initializeImageCache() {
+    try {
+        const cachedData = localStorage.getItem('cookingImageCache');
+        if (cachedData) {
+            const parsedCache = JSON.parse(cachedData);
+            Object.entries(parsedCache).forEach(([key, url]) => {
+                imageCache.set(key, url);
+            });
+            console.log('Loaded', imageCache.size, 'images from local storage');
+        }
+    } catch (error) {
+        console.log('Could not load cached images:', error);
+    }
+}
+
 // Initialize App
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
@@ -162,8 +85,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function initializeApp() {
     audioPlayer = document.getElementById('audio-player');
+    initializeImageCache(); // Load cached images
+    createPlaceholderAssets(); // Call this before setting up event listeners that might trigger image loads
     setupEventListeners();
-    createPlaceholderAssets();
 }
 
 function setupEventListeners() {
@@ -282,6 +206,7 @@ async function processImageFile(file) {
         hideLoading();
     } catch (error) {
         console.error('Image processing failed:', error);
+        hideLoading();
         // Fallback to mock behavior
         setTimeout(async () => {
             const recipes = Object.keys(recipeData);
@@ -311,6 +236,7 @@ async function processResultFile(file) {
         reader.readAsDataURL(file);
     } catch (error) {
         console.error('Result processing failed:', error);
+        hideLoading();
         // Fallback to mock behavior
         const reader = new FileReader();
         reader.onload = function(e) {
@@ -326,7 +252,7 @@ async function processResultFile(file) {
 }
 
 async function loadRecipe(recipeKey) {
-    currentRecipe = recipeData[recipeKey];
+    currentRecipe = JSON.parse(JSON.stringify(recipeData[recipeKey])); // Deep copy to avoid modifying original mock data
     if (!currentRecipe) return;
 
     document.getElementById('recipe-title').textContent = currentRecipe.title;
@@ -360,14 +286,35 @@ async function loadRecipe(recipeKey) {
 function generateStepsGrid() {
     const stepsGrid = document.getElementById('steps-grid');
     stepsGrid.innerHTML = '';
+    const ingredientsDisplay = document.getElementById('ingredients-display');
+    ingredientsDisplay.innerHTML = '';
 
-    currentRecipe.steps.forEach((step, index) => {
+    // Display ingredients image separately
+    const ingredientsStep = currentRecipe.steps.find(step => step.title === "Ingredients");
+    if (ingredientsStep) {
+        const ingredientsCard = document.createElement('div');
+        ingredientsCard.className = 'ingredients-card';
+        ingredientsCard.innerHTML = `
+            <img src="${ingredientsStep.image}" alt="${ingredientsStep.title}" class="ingredients-image">
+            <div class="ingredients-title">${ingredientsStep.title}</div>
+            <div class="ingredients-time">⏱️ ${ingredientsStep.timeEstimate}</div>
+            <div class="audio-icon">🔊</div>
+        `;
+        ingredientsCard.addEventListener('click', () => playStepAudio(ingredientsStep, ingredientsCard));
+        ingredientsDisplay.appendChild(ingredientsCard);
+    }
+
+    // Display other steps
+    currentRecipe.steps.filter(step => step.title !== "Ingredients").forEach((step) => {
         const stepCard = document.createElement('div');
         stepCard.className = 'step-card';
+        const timeEstimate = step.timeEstimate || estimateStepTime(step.instruction, step.title);
+        
         stepCard.innerHTML = `
             <div class="step-number">${step.id}</div>
-            <img src="${step.image}" alt="${step.title}" class="step-image" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjNjY3ZWVhIi8+Cjx0ZXh0IHg9IjQwIiB5PSI0NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+U3RlcCAke3N0ZXAuaWR9PC90ZXh0Pgo8L3N2Zz4K'">
+            <img src="${step.image}" alt="${step.title}" class="step-image">
             <div class="step-title">${step.title}</div>
+            <div class="step-time">⏱️ ${timeEstimate}</div>
             <div class="audio-icon">🔊</div>
         `;
 
@@ -377,28 +324,29 @@ function generateStepsGrid() {
 }
 
 function playStepAudio(step, stepCard) {
-    // Stop current audio if playing
     if (currentPlayingStep) {
         currentPlayingStep.classList.remove('playing');
         audioPlayer.pause();
     }
 
-    // Set new playing step
     currentPlayingStep = stepCard;
     stepCard.classList.add('playing');
 
-    // Try to play audio file, fallback to speech synthesis
-    audioPlayer.src = step.audio;
-    audioPlayer.play().catch(() => {
-        // Fallback to text-to-speech
+    if (CONFIG.ENABLE_AI_TTS) {
+        generateAndPlayTTS(step.instruction).catch(error => {
+            console.error("AI TTS failed, falling back to browser TTS.", error);
+            speakText(step.instruction); // Fallback
+        });
+    } else {
         speakText(step.instruction);
-    });
+    }
 }
+
 
 function speakText(text) {
     if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 0.8;
+        utterance.rate = 0.9;
         utterance.pitch = 1;
         utterance.volume = 0.8;
 
@@ -408,43 +356,28 @@ function speakText(text) {
                 currentPlayingStep = null;
             }
         };
-
+        
+        speechSynthesis.cancel(); // Clear any previous utterances
         speechSynthesis.speak(utterance);
-    } else {
-        // If no speech synthesis, just show visual feedback
-        setTimeout(() => {
-            if (currentPlayingStep) {
-                currentPlayingStep.classList.remove('playing');
-                currentPlayingStep = null;
-            }
-        }, 2000);
     }
 }
 
 function analyzeResult(quality, imageUrl) {
     currentAnalysis = analysisData[quality];
 
-    // Set comparison images
     document.getElementById('original-image').src = currentRecipe.originalImage;
     document.getElementById('result-image').src = imageUrl;
 
-    // Generate radar chart
     generateRadarChart(currentAnalysis.scores);
-
-    // Generate score details
     generateScoreDetails(currentAnalysis.scores);
-
     showPage('analysis-page');
 }
 
 function generateRadarChart(scores) {
     const ctx = document.getElementById('radar-chart').getContext('2d');
-
-    // Destroy existing chart if it exists
     if (window.radarChart) {
         window.radarChart.destroy();
     }
-
     window.radarChart = new Chart(ctx, {
         type: 'radar',
         data: {
@@ -464,20 +397,8 @@ function generateRadarChart(scores) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: {
-                r: {
-                    beginAtZero: true,
-                    max: 5,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                }
-            }
+            scales: { r: { beginAtZero: true, max: 5, ticks: { stepSize: 1 } } },
+            plugins: { legend: { display: false } }
         }
     });
 }
@@ -485,41 +406,31 @@ function generateRadarChart(scores) {
 function generateScoreDetails(scores) {
     const scoreGrid = document.getElementById('score-details');
     scoreGrid.innerHTML = '';
-
     Object.entries(scores).forEach(([category, score]) => {
         const scoreItem = document.createElement('div');
         scoreItem.className = 'score-item';
-
-        let scoreClass = 'score-poor';
-        if (score >= 4) scoreClass = 'score-excellent';
-        else if (score >= 3) scoreClass = 'score-good';
-
+        let scoreClass = score >= 4 ? 'score-excellent' : score >= 3 ? 'score-good' : 'score-poor';
         scoreItem.innerHTML = `
             <div class="score-label">${category.charAt(0).toUpperCase() + category.slice(1)}</div>
-            <div class="score-value ${scoreClass}">${score}/5</div>
-        `;
-
+            <div class="score-value ${scoreClass}">${score}/5</div>`;
         scoreGrid.appendChild(scoreItem);
     });
 }
 
 function playFeedback() {
     if (!currentAnalysis) return;
-
-    // Try to play audio file, fallback to speech synthesis
-    audioPlayer.src = currentAnalysis.audioFile;
-    audioPlayer.play().catch(() => {
+    if (CONFIG.ENABLE_AI_TTS) {
+        generateAndPlayTTS(`Here is your feedback. ${currentAnalysis.feedback}`).catch(error => {
+            console.error("AI TTS feedback failed, falling back to browser TTS.", error);
+            speakText(currentAnalysis.feedback);
+        });
+    } else {
         speakText(currentAnalysis.feedback);
-    });
+    }
 }
 
 function showPage(pageId) {
-    // Hide all pages
-    document.querySelectorAll('.page').forEach(page => {
-        page.classList.remove('active');
-    });
-
-    // Show target page
+    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
 }
 
@@ -533,7 +444,6 @@ function hideLoading() {
 }
 
 function createPlaceholderAssets() {
-    // Create placeholder images using data URLs for demo
     const placeholderImages = {
         'assets/samples/pizza.jpg': createPlaceholderImage('🍕', 'Pizza'),
         'assets/samples/coffee.jpg': createPlaceholderImage('☕', 'Coffee'),
@@ -542,696 +452,424 @@ function createPlaceholderAssets() {
         'assets/results/pizza-okay.jpg': createPlaceholderImage('🍕👍', 'Good Pizza'),
         'assets/results/pizza-poor.jpg': createPlaceholderImage('🍕😅', 'Practice Pizza')
     };
-
-    // Update image sources
     Object.entries(placeholderImages).forEach(([path, dataUrl]) => {
         document.querySelectorAll(`img[src="${path}"]`).forEach(img => {
             img.src = dataUrl;
         });
     });
-
-    // Update recipe data with placeholder images
     Object.values(recipeData).forEach(recipe => {
         recipe.steps.forEach(step => {
-            step.image = createStepPlaceholder(step.title, step.id);
+            if (!step.image || step.image.startsWith('assets/')) {
+                 step.image = createRealisticStepPlaceholder(step.title, step.instruction);
+            }
         });
     });
 }
 
 function createPlaceholderImage(emoji, text) {
     const canvas = document.createElement('canvas');
-    canvas.width = 200;
-    canvas.height = 200;
+    canvas.width = 200; canvas.height = 200;
     const ctx = canvas.getContext('2d');
-
-    // Background
     ctx.fillStyle = '#667eea';
     ctx.fillRect(0, 0, 200, 200);
-
-    // Emoji
     ctx.font = '60px Arial';
     ctx.textAlign = 'center';
     ctx.fillText(emoji, 100, 100);
-
-    // Text
     ctx.fillStyle = 'white';
     ctx.font = '16px Arial';
     ctx.fillText(text, 100, 150);
-
     return canvas.toDataURL();
-}
-
-function createStepPlaceholder(title, stepNumber) {
-    const canvas = document.createElement('canvas');
-    canvas.width = 80;
-    canvas.height = 80;
-    const ctx = canvas.getContext('2d');
-
-    // Background
-    ctx.fillStyle = '#667eea';
-    ctx.fillRect(0, 0, 80, 80);
-
-    // Step number
-    ctx.fillStyle = 'white';
-    ctx.font = 'bold 24px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText(stepNumber, 40, 35);
-
-    // Title
-    ctx.font = '10px Arial';
-    ctx.fillText(title, 40, 55);
-
-    return canvas.toDataURL();
-}
-
-// Utility function to handle image loading errors
-function handleImageError(img) {
-    img.src = createPlaceholderImage('🖼️', 'Image');
 }
 
 // Gemini API Functions
 async function analyzeUploadedFood(imageFile) {
+    if (!CONFIG.ENABLE_AI_ANALYSIS) {
+        console.log("AI analysis is disabled. Using mock data.");
+        const recipes = Object.keys(recipeData);
+        const randomRecipe = recipes[Math.floor(Math.random() * recipes.length)];
+        return { dishName: recipeData[randomRecipe].title, confidence: 0.5, cookingSteps: recipeData[randomRecipe].steps };
+    }
     try {
         const base64Image = await fileToBase64(imageFile);
-
-        const requestBody = {
-            contents: [{
-                parts: [
-                    {
-                        text: "Analyze this food image and identify the dish. Provide a JSON response with: dishName (string), confidence (0-1), and cookingSteps (array of 4-6 step objects with id, title, and instruction). Focus on common, recognizable dishes. Example format: {\"dishName\": \"Pizza\", \"confidence\": 0.9, \"cookingSteps\": [{\"id\": 1, \"title\": \"Preheat\", \"instruction\": \"Preheat oven to 450°F\"}, ...]}"
-                    },
-                    {
-                        inline_data: {
-                            mime_type: imageFile.type,
-                            data: base64Image
-                        }
-                    }
-                ]
-            }]
-        };
-
-        const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestBody)
-        });
-
-        if (!response.ok) {
-            throw new Error(`API request failed: ${response.status}`);
-        }
-
+        const requestBody = { contents: [{ parts: [ { text: "Analyze this food image and identify the dish. Respond ONLY in English. Provide a JSON response with: dishName (string, in English), confidence (0-1), and cookingSteps (array of 4-6 step objects with id, title, and instruction). Focus on common, recognizable dishes. Example format: {\"dishName\": \"Pizza\", \"confidence\": 0.9, \"cookingSteps\": [{\"id\": 1, \"title\": \"Preheat\", \"instruction\": \"Preheat oven to 450°F\"}, ...]}" }, { inline_data: { mime_type: imageFile.type, data: base64Image } } ] }] };
+        const response = await fetch(`${CONFIG.GEMINI_TEXT_API_URL}?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody) });
+        if (!response.ok) throw new Error(`API request failed: ${response.status}`);
         const data = await response.json();
         const textResponse = data.candidates[0].content.parts[0].text;
-
-        // Parse JSON response
         const jsonMatch = textResponse.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-            return JSON.parse(jsonMatch[0]);
-        }
-
+        if (jsonMatch) return JSON.parse(jsonMatch[0]);
         throw new Error('Invalid response format');
     } catch (error) {
         console.error('Food analysis failed:', error);
-        // Fallback to random recipe
         const recipes = Object.keys(recipeData);
         const randomRecipe = recipes[Math.floor(Math.random() * recipes.length)];
-        return {
-            dishName: recipeData[randomRecipe].title,
-            confidence: 0.5,
-            cookingSteps: recipeData[randomRecipe].steps
-        };
+        return { dishName: recipeData[randomRecipe].title, confidence: 0.5, cookingSteps: recipeData[randomRecipe].steps };
     }
 }
 
 async function generateStepImage(instruction, stepTitle) {
+    if (!CONFIG.ENABLE_AI_IMAGE_GENERATION) {
+        return createRealisticStepPlaceholder(stepTitle, instruction);
+    }
+    const cacheKey = `${stepTitle}-${instruction}`;
+    if (imageCache.has(cacheKey)) {
+        console.log('Using cached image for:', stepTitle);
+        return imageCache.get(cacheKey);
+    }
     try {
-        // Check cache first
-        const cacheKey = `${stepTitle}-${instruction}`;
-        if (imageCache.has(cacheKey)) {
-            return imageCache.get(cacheKey);
-        }
-
-        // Use Gemini to generate realistic cooking step images
+        console.log('Generating image for step:', stepTitle);
         const imagePrompt = `Generate a realistic, high-quality photograph of a cooking step: ${instruction}. Show the actual cooking process in a clean, modern kitchen. Professional food photography style with good lighting, sharp focus, and appetizing presentation. No text, labels, or overlays in the image. Focus on the hands, ingredients, and cooking tools performing the specific action described.`;
-
         const generatedImage = await generateImageWithGemini(imagePrompt);
-
-        // Cache the result
         imageCache.set(cacheKey, generatedImage);
+        try {
+            const imageCacheData = JSON.parse(localStorage.getItem('cookingImageCache') || '{}');
+            imageCacheData[cacheKey] = generatedImage;
+            localStorage.setItem('cookingImageCache', JSON.stringify(imageCacheData));
+        } catch (storageError) { console.log('Could not save to local storage:', storageError); }
         return generatedImage;
-
     } catch (error) {
-        console.error('Image generation failed:', error);
-        // Fallback to realistic placeholder without text
+        console.error('Image generation failed for step:', stepTitle, '- error:', error);
         return createRealisticStepPlaceholder(stepTitle, instruction);
     }
 }
 
 async function generateImageWithGemini(prompt) {
     try {
-        // Note: Gemini doesn't currently support image generation
-        // Using alternative methods for realistic cooking images
-
-        // Try OpenAI DALL-E 3 if API key is available
-        if (CONFIG.OPENAI_API_KEY && CONFIG.OPENAI_API_KEY !== 'YOUR_OPENAI_API_KEY') {
-            console.log('Attempting DALL-E 3 image generation...');
-            const response = await fetch('https://api.openai.com/v1/images/generations', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${CONFIG.OPENAI_API_KEY}`
-                },
-                body: JSON.stringify({
-                    model: "dall-e-3",
-                    prompt: prompt,
-                    n: 1,
-                    size: "1024x1024",
-                    quality: "standard"
-                })
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                console.log('DALL-E 3 image generated successfully');
-                return data.data[0].url;
-            } else {
-                console.log('DALL-E 3 failed:', response.status, response.statusText);
-            }
-        } else {
-            console.log('OpenAI API key not configured, skipping DALL-E 3');
-        }
-
-        // Try Unsplash API for realistic food photography
-        console.log('Attempting Unsplash API...');
-        const unsplashQuery = extractFoodKeywords(prompt);
-
-        // Use a more reliable Unsplash access key (you should replace this with your own)
-        const unsplashResponse = await fetch(`https://api.unsplash.com/photos/random?query=${unsplashQuery}&orientation=square`, {
-            headers: {
-                'Authorization': 'Client-ID 8XJLd4k_4VI6HVKyKUfF7w7_JbqNVqbR8QK8V8mHNms'
-            }
-        });
-
-        if (unsplashResponse.ok) {
-            const data = await unsplashResponse.json();
-            console.log('Unsplash image retrieved successfully');
-            return data.urls.regular;
-        } else {
-            console.log('Unsplash failed:', unsplashResponse.status, unsplashResponse.statusText);
-        }
-
-        // If all external APIs fail, throw error to use fallback placeholder
-        throw new Error('All image generation methods failed');
+        console.log('Generating image with nano-banana for prompt:', prompt);
+        const payload = { 
+            contents: [{ parts: [{ text: prompt }] }], 
+            generationConfig: { responseModalities: ['IMAGE'] } 
+        };
+        const response = await fetch(`${CONFIG.GEMINI_IMAGE_API_URL}?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        if (!response.ok) { const errorBody = await response.text(); throw new Error(`API request failed with status ${response.status}: ${errorBody}`); }
+        const result = await response.json();
+        const base64Data = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+        if (!base64Data) { console.error('No image data found in API response:', result); throw new Error('No image data found in API response.'); }
+        const imageUrl = `data:image/png;base64,${base64Data}`;
+        // ADDED LOGGING
+        console.log('--- Image generated ---');
+        console.log('Temporary Data URL (truncated):', `${imageUrl.substring(0, 100)}...`);
+        console.log('This is a temporary in-memory URL used by the browser. It does not correspond to a file on your disk.');
+        return imageUrl;
     } catch (error) {
-        console.error('Image generation failed:', error);
-        throw error;
+        console.error('Image generation with Gemini failed:', error);
+        return createRealisticStepPlaceholder("Error", "Could not generate image");
     }
 }
 
-async function generateRealisticImage(prompt) {
-    try {
-        // First try OpenAI DALL-E 3 if API key is available
-        if (CONFIG.OPENAI_API_KEY && CONFIG.OPENAI_API_KEY !== 'YOUR_OPENAI_API_KEY') {
-            const response = await fetch('https://api.openai.com/v1/images/generations', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${CONFIG.OPENAI_API_KEY}`
-                },
-                body: JSON.stringify({
-                    model: "dall-e-3",
-                    prompt: prompt,
-                    n: 1,
-                    size: "1024x1024",
-                    quality: "standard"
-                })
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                return data.data[0].url;
-            }
-        }
-
-        // Fallback: Use Unsplash API for food photography
-        const unsplashQuery = extractFoodKeywords(prompt);
-        const unsplashResponse = await fetch(`https://api.unsplash.com/photos/random?query=${unsplashQuery}&orientation=square&client_id=demo`);
-
-        if (unsplashResponse.ok) {
-            const data = await unsplashResponse.json();
-            return data.urls.regular;
-        }
-
-        throw new Error('All image generation methods failed');
-    } catch (error) {
-        console.error('Realistic image generation failed:', error);
-        throw error;
-    }
-}
-
-function extractFoodKeywords(prompt) {
-    // Extract relevant food/cooking keywords from the prompt
-    const foodKeywords = ['cooking', 'food', 'kitchen', 'ingredients', 'recipe', 'chef', 'preparation'];
-    const words = prompt.toLowerCase().split(' ');
-    const relevantWords = words.filter(word =>
-        word.length > 3 &&
-        (foodKeywords.some(keyword => word.includes(keyword)) ||
-         ['bake', 'cook', 'prep', 'mix', 'chop', 'slice', 'dice', 'sauté', 'boil', 'fry'].includes(word))
-    );
-    return relevantWords.slice(0, 3).join(',') || 'cooking,food,kitchen';
-}
-
-function createRealisticStepPlaceholder(title, instruction) {
-    const canvas = document.createElement('canvas');
-    canvas.width = 400;
-    canvas.height = 400;
-    const ctx = canvas.getContext('2d');
-
-    // Create a realistic kitchen/cooking background
-    const gradient = ctx.createRadialGradient(200, 200, 0, 200, 200, 200);
-    gradient.addColorStop(0, '#f8f9fa');
-    gradient.addColorStop(0.3, '#e9ecef');
-    gradient.addColorStop(0.7, '#dee2e6');
-    gradient.addColorStop(1, '#adb5bd');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 400, 400);
-
-    // Add realistic kitchen counter texture
-    ctx.fillStyle = 'rgba(0,0,0,0.03)';
-    for (let i = 0; i < 200; i++) {
-        const x = Math.random() * 400;
-        const y = Math.random() * 400;
-        const size = Math.random() * 3 + 1;
-        ctx.fillRect(x, y, size, size);
-    }
-
-    // Add subtle wood grain effect
-    ctx.strokeStyle = 'rgba(0,0,0,0.02)';
-    ctx.lineWidth = 1;
-    for (let i = 0; i < 20; i++) {
-        ctx.beginPath();
-        ctx.moveTo(0, Math.random() * 400);
-        ctx.lineTo(400, Math.random() * 400);
-        ctx.stroke();
-    }
-
-    // Create cooking-related visual elements based on instruction (no text)
-    const inst = instruction.toLowerCase();
-
-    // Draw abstract cooking shapes/elements
-    ctx.fillStyle = 'rgba(102, 126, 234, 0.1)';
-
-    if (inst.includes('oven') || inst.includes('bake')) {
-        // Draw oven-like rectangle
-        ctx.fillRect(150, 150, 100, 80);
-        ctx.strokeStyle = 'rgba(102, 126, 234, 0.3)';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(150, 150, 100, 80);
-    } else if (inst.includes('water') || inst.includes('boil')) {
-        // Draw pot/water circles
-        ctx.beginPath();
-        ctx.arc(200, 200, 60, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.stroke();
-    } else if (inst.includes('cut') || inst.includes('slice')) {
-        // Draw cutting board rectangle
-        ctx.fillRect(120, 180, 160, 40);
-        ctx.strokeRect(120, 180, 160, 40);
-    } else if (inst.includes('mix') || inst.includes('stir')) {
-        // Draw bowl circle
-        ctx.beginPath();
-        ctx.arc(200, 200, 50, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.stroke();
-    } else {
-        // Default cooking surface
-        ctx.fillRect(100, 180, 200, 40);
-        ctx.strokeRect(100, 180, 200, 40);
-    }
-
-    // Add subtle highlight to make it look more realistic
-    const highlight = ctx.createLinearGradient(0, 0, 400, 400);
-    highlight.addColorStop(0, 'rgba(255,255,255,0.1)');
-    highlight.addColorStop(1, 'rgba(255,255,255,0)');
-    ctx.fillStyle = highlight;
-    ctx.fillRect(0, 0, 400, 400);
-
-    return canvas.toDataURL();
-}
 
 async function analyzeResultWithGemini(imageFile, originalRecipe) {
+     if (!CONFIG.ENABLE_AI_ANALYSIS) {
+        console.log("AI analysis is disabled. Using mock data.");
+        const qualities = ['good', 'okay', 'poor'];
+        const randomQuality = qualities[Math.floor(Math.random() * qualities.length)];
+        return { scores: analysisData[randomQuality].scores, feedback: analysisData[randomQuality].feedback, overall: randomQuality };
+    }
     try {
         const base64Image = await fileToBase64(imageFile);
-
-        const requestBody = {
-            contents: [{
-                parts: [
-                    {
-                        text: `Analyze this cooked dish image and rate it on a scale of 1-5 for: color, texture, ingredients, presentation, and portion. Also provide constructive feedback. The dish should be: ${originalRecipe.title}. Respond in JSON format: {"scores": {"color": 4, "texture": 3, "ingredients": 5, "presentation": 4, "portion": 4}, "feedback": "Your detailed feedback here", "overall": "good/okay/poor"}`
-                    },
-                    {
-                        inline_data: {
-                            mime_type: imageFile.type,
-                            data: base64Image
-                        }
-                    }
-                ]
-            }]
-        };
-
-        const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestBody)
-        });
-
-        if (!response.ok) {
-            throw new Error(`Analysis failed: ${response.status}`);
-        }
-
+        const requestBody = { contents: [{ parts: [ { text: `Analyze this cooked dish image and rate it on a scale of 1-5 for: color, texture, ingredients, presentation, and portion. Respond ONLY in English. Also provide constructive feedback. The dish should be: ${originalRecipe.title}. Respond in JSON format: {"scores": {"color": 4, "texture": 3, "ingredients": 5, "presentation": 4, "portion": 4}, "feedback": "Your detailed feedback here", "overall": "good/okay/poor"}` }, { inline_data: { mime_type: imageFile.type, data: base64Image } } ] }] };
+        const response = await fetch(`${CONFIG.GEMINI_TEXT_API_URL}?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody) });
+        if (!response.ok) throw new Error(`Analysis failed: ${response.status}`);
         const data = await response.json();
         const textResponse = data.candidates[0].content.parts[0].text;
-
-        // Parse JSON response
         const jsonMatch = textResponse.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-            return JSON.parse(jsonMatch[0]);
-        }
-
+        if (jsonMatch) return JSON.parse(jsonMatch[0]);
         throw new Error('Invalid response format');
     } catch (error) {
         console.error('Result analysis failed:', error);
-        // Fallback to random analysis
         const qualities = ['good', 'okay', 'poor'];
         const randomQuality = qualities[Math.floor(Math.random() * qualities.length)];
-        return {
-            scores: analysisData[randomQuality].scores,
-            feedback: analysisData[randomQuality].feedback,
-            overall: randomQuality
-        };
+        return { scores: analysisData[randomQuality].scores, feedback: analysisData[randomQuality].feedback, overall: randomQuality };
     }
 }
+
+// --- TTS FUNCTIONS ---
+async function generateAndPlayTTS(text) {
+    if (!text) return;
+    console.log("Generating AI TTS for:", text);
+
+    const payload = {
+        contents: [{ parts: [{ text: `Speak in a friendly, clear, and encouraging tone: ${text}` }] }],
+        generationConfig: {
+            responseModalities: ["AUDIO"],
+            speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Puck" } } }
+        },
+        model: "gemini-2.5-flash-preview-tts"
+    };
+
+    try {
+        const response = await fetch(`${CONFIG.GEMINI_TTS_API_URL}?key=${GEMINI_API_KEY}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) throw new Error(`TTS API request failed: ${response.status}`);
+
+        const result = await response.json();
+        const part = result?.candidates?.[0]?.content?.parts?.[0];
+        const audioData = part?.inlineData?.data;
+        const mimeType = part?.inlineData?.mimeType;
+
+        if (audioData && mimeType?.startsWith("audio/")) {
+            const sampleRateMatch = mimeType.match(/rate=(\d+)/);
+            const sampleRate = sampleRateMatch ? parseInt(sampleRateMatch[1], 10) : 24000;
+            
+            const pcmData = base64ToArrayBuffer(audioData);
+            const pcm16 = new Int16Array(pcmData);
+            const wavBlob = pcmToWav(pcm16, 1, sampleRate);
+            const audioUrl = URL.createObjectURL(wavBlob);
+            
+            // ADDED LOGGING
+            console.log('--- TTS audio generated ---');
+            console.log('Temporary Object URL:', audioUrl);
+            console.log('This is a temporary in-memory URL used by the browser. It does not correspond to a file on your disk.');
+
+            audioPlayer.src = audioUrl;
+            audioPlayer.play();
+        } else {
+            throw new Error("Invalid audio data in API response.");
+        }
+    } catch (error) {
+        console.error("Error in generateAndPlayTTS:", error);
+        // Fallback to browser TTS if AI fails
+        speakText(text);
+    }
+}
+
+function base64ToArrayBuffer(base64) {
+    const binaryString = window.atob(base64);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+}
+
+function pcmToWav(pcmData, numChannels, sampleRate) {
+    const buffer = new ArrayBuffer(44 + pcmData.length * 2);
+    const view = new DataView(buffer);
+    writeString(view, 0, 'RIFF');
+    view.setUint32(4, 36 + pcmData.length * 2, true);
+    writeString(view, 8, 'WAVE');
+    writeString(view, 12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, numChannels, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * 2 * numChannels, true);
+    view.setUint16(32, numChannels * 2, true);
+    view.setUint16(34, 16, true);
+    writeString(view, 36, 'data');
+    view.setUint32(40, pcmData.length * 2, true);
+    for (let i = 0; i < pcmData.length; i++) {
+        view.setInt16(44 + i * 2, pcmData[i], true);
+    }
+    return new Blob([view], { type: 'audio/wav' });
+}
+
+function writeString(view, offset, string) {
+    for (let i = 0; i < string.length; i++) {
+        view.setUint8(offset + i, string.charCodeAt(i));
+    }
+}
+// --- END OF TTS FUNCTIONS ---
+
 
 // Helper Functions
 async function fileToBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = () => {
-            const base64 = reader.result.split(',')[1];
-            resolve(base64);
-        };
+        reader.onload = () => resolve(reader.result.split(',')[1]);
         reader.onerror = reject;
         reader.readAsDataURL(file);
     });
 }
 
-function createEnhancedStepPlaceholder(title, instruction) {
-    const canvas = document.createElement('canvas');
-    canvas.width = 200;
-    canvas.height = 200;
-    const ctx = canvas.getContext('2d');
-
-    // Background gradient
-    const gradient = ctx.createLinearGradient(0, 0, 200, 200);
-    gradient.addColorStop(0, '#667eea');
-    gradient.addColorStop(1, '#764ba2');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 200, 200);
-
-    // Add cooking-related emoji based on instruction
-    let emoji = '🍳';
-    if (instruction.toLowerCase().includes('oven') || instruction.toLowerCase().includes('bake')) emoji = '🔥';
-    if (instruction.toLowerCase().includes('water') || instruction.toLowerCase().includes('boil')) emoji = '💧';
-    if (instruction.toLowerCase().includes('cut') || instruction.toLowerCase().includes('slice')) emoji = '🔪';
-    if (instruction.toLowerCase().includes('mix') || instruction.toLowerCase().includes('stir')) emoji = '🥄';
-    if (instruction.toLowerCase().includes('cheese')) emoji = '🧀';
-    if (instruction.toLowerCase().includes('sauce')) emoji = '🍅';
-
-    // Draw emoji
-    ctx.font = '60px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText(emoji, 100, 100);
-
-    // Draw title
-    ctx.fillStyle = 'white';
-    ctx.font = 'bold 18px Arial';
-    ctx.fillText(title, 100, 140);
-
-    // Draw instruction (truncated)
-    ctx.font = '12px Arial';
-    const truncatedInstruction = instruction.length > 30 ? instruction.substring(0, 30) + '...' : instruction;
-    ctx.fillText(truncatedInstruction, 100, 165);
-
-    return canvas.toDataURL();
-}
-
 // Dynamic Recipe Creation Functions
 async function createDynamicRecipe(analysis, originalImageFile) {
     try {
-        showLoading('Generating cooking steps...');
-
-        // Create recipe object from AI analysis
+        showLoading('Generating ingredients and cooking steps...');
         const dynamicRecipe = {
             title: analysis.dishName,
             originalImage: URL.createObjectURL(originalImageFile),
             steps: []
         };
 
-        // Generate enhanced step images for each cooking step
-        for (let i = 0; i < analysis.cookingSteps.length; i++) {
-            const step = analysis.cookingSteps[i];
-            const stepImage = await generateStepImage(step.instruction, step.title);
+        showLoading('Generating ingredients image...');
+        const ingredientsPrompt = `Generate a realistic, high-quality photograph showing all the ingredients needed to make ${analysis.dishName}. Display ingredients neatly arranged on a clean kitchen counter or cutting board. Professional food photography style with good lighting and sharp focus. Show fresh, appetizing ingredients laid out ready for cooking. No text or labels in the image.`;
+        const ingredientsImage = await generateImageWithGemini(ingredientsPrompt);
+        
+        dynamicRecipe.steps.push({
+            id: 0,
+            title: "Ingredients",
+            image: ingredientsImage,
+            instruction: `Gather all ingredients needed for ${analysis.dishName}.`,
+            timeEstimate: "5 minutes"
+        });
 
-            dynamicRecipe.steps.push({
-                id: step.id,
-                title: step.title,
-                image: stepImage,
-                audio: `assets/audio/${step.title.toLowerCase().replace(/\s+/g, '-')}.mp3`,
-                instruction: step.instruction
-            });
+        showLoading('Generating step-by-step cooking images...');
+        for (const step of analysis.cookingSteps) {
+            const stepImage = await generateStepImage(step.instruction, step.title);
+            const timeEstimate = estimateStepTime(step.instruction, step.title);
+            dynamicRecipe.steps.push({ ...step, image: stepImage, timeEstimate });
         }
 
-        // Set as current recipe and display
         currentRecipe = dynamicRecipe;
         document.getElementById('recipe-title').textContent = currentRecipe.title;
         generateStepsGrid();
+        hideLoading();
         showPage('steps-page');
 
     } catch (error) {
         console.error('Dynamic recipe creation failed:', error);
-        // Fallback to static recipe
+        hideLoading();
         const recipes = Object.keys(recipeData);
         const randomRecipe = recipes[Math.floor(Math.random() * recipes.length)];
-        loadRecipe(randomRecipe);
+        await loadRecipe(randomRecipe);
     }
 }
 
 function analyzeResultWithData(analysis, imageUrl) {
-    // Create analysis object compatible with existing system
     currentAnalysis = {
         scores: analysis.scores,
         feedback: analysis.feedback,
-        audioFile: `assets/audio/feedback-${analysis.overall}.mp3`
     };
-
-    // Set comparison images
     document.getElementById('original-image').src = currentRecipe.originalImage;
     document.getElementById('result-image').src = imageUrl;
-
-    // Generate radar chart
     generateRadarChart(currentAnalysis.scores);
-
-    // Generate score details
     generateScoreDetails(currentAnalysis.scores);
-
     showPage('analysis-page');
 }
 
 // Social Sharing and Save Functions
 async function createComparisonImage() {
     const canvas = document.createElement('canvas');
-    canvas.width = 800;
-    canvas.height = 600;
+    canvas.width = 1200; canvas.height = 800;
     const ctx = canvas.getContext('2d');
-
-    // Background gradient
-    const gradient = ctx.createLinearGradient(0, 0, 800, 600);
-    gradient.addColorStop(0, '#667eea');
-    gradient.addColorStop(1, '#764ba2');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 800, 600);
-
-    // Title
-    ctx.fillStyle = 'white';
-    ctx.font = 'bold 32px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, 1200, 800);
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(10, 10, 1180, 780);
+    ctx.fillStyle = '#333333';
+    ctx.font = 'bold 36px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText(`${currentRecipe.title} - Cooking Analysis`, 400, 50);
+    ctx.fillText(`${currentRecipe.title} - Cooking Analysis`, 600, 60);
 
-    // Load and draw images
     const originalImg = new Image();
     const resultImg = new Image();
+    originalImg.crossOrigin = "Anonymous";
+    resultImg.crossOrigin = "Anonymous";
 
     return new Promise((resolve) => {
         let imagesLoaded = 0;
-
         const checkComplete = () => {
             imagesLoaded++;
             if (imagesLoaded === 2) {
-                // Draw original image
-                ctx.drawImage(originalImg, 50, 100, 200, 200);
-                ctx.fillStyle = 'white';
-                ctx.font = '18px Arial';
-                ctx.fillText('Original Recipe', 150, 320);
-
-                // VS text
+                ctx.drawImage(originalImg, 100, 100, 300, 300);
+                ctx.fillStyle = '#666666';
+                ctx.font = 'bold 20px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Original Recipe', 250, 430);
+                ctx.drawImage(resultImg, 800, 100, 300, 300);
+                ctx.fillText('Your Result', 950, 430);
+                drawRadarChartOnCanvas(ctx, currentAnalysis.scores, 600, 500, 200);
+                const averageScore = Object.values(currentAnalysis.scores).reduce((a, b) => a + b, 0) / 5;
+                ctx.fillStyle = '#333333';
                 ctx.font = 'bold 24px Arial';
-                ctx.fillText('VS', 400, 200);
-
-                // Draw result image
-                ctx.drawImage(resultImg, 550, 100, 200, 200);
-                ctx.font = '18px Arial';
-                ctx.fillText('Your Result', 650, 320);
-
-                // Add scores
-                ctx.font = '20px Arial';
-                ctx.fillText('Your Scores:', 400, 380);
-
-                let y = 410;
-                Object.entries(currentAnalysis.scores).forEach(([category, score]) => {
-                    ctx.fillText(`${category}: ${score}/5`, 400, y);
-                    y += 30;
-                });
-
-                // Add feedback
-                ctx.font = '16px Arial';
-                const words = currentAnalysis.feedback.split(' ');
-                let line = '';
-                y = 550;
-
-                for (let n = 0; n < words.length; n++) {
-                    const testLine = line + words[n] + ' ';
-                    const metrics = ctx.measureText(testLine);
-                    if (metrics.width > 700 && n > 0) {
-                        ctx.fillText(line, 400, y);
-                        line = words[n] + ' ';
-                        y += 20;
-                        if (y > 590) break;
-                    } else {
-                        line = testLine;
-                    }
-                }
-                ctx.fillText(line, 400, y);
-
-                resolve(canvas.toDataURL());
+                ctx.fillText(`Overall Score: ${averageScore.toFixed(1)}/5`, 600, 750);
+                resolve(canvas.toDataURL('image/png'));
             }
         };
-
         originalImg.onload = checkComplete;
         resultImg.onload = checkComplete;
-
+        originalImg.onerror = () => { console.error("Error loading original image for canvas."); checkComplete(); };
+        resultImg.onerror = () => { console.error("Error loading result image for canvas."); checkComplete(); };
         originalImg.src = document.getElementById('original-image').src;
         resultImg.src = document.getElementById('result-image').src;
+    });
+}
+
+function drawRadarChartOnCanvas(ctx, scores, centerX, centerY, radius) {
+    const categories = ['Color', 'Texture', 'Ingredients', 'Presentation', 'Portion'];
+    const values = [scores.color, scores.texture, scores.ingredients, scores.presentation, scores.portion];
+    const angles = categories.map((_, i) => (Math.PI * 2 * i) / categories.length - Math.PI / 2);
+
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 1;
+    for (let r = 1; r <= 5; r++) {
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, (radius * r) / 5, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+    
+    ctx.strokeStyle = '#cccccc';
+    angles.forEach(angle => {
+        const x = centerX + Math.cos(angle) * radius;
+        const y = centerY + Math.sin(angle) * radius;
+        ctx.beginPath(); ctx.moveTo(centerX, centerY); ctx.lineTo(x, y); ctx.stroke();
+    });
+
+    ctx.fillStyle = 'rgba(102, 126, 234, 0.3)';
+    ctx.strokeStyle = 'rgba(102, 126, 234, 1)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    values.forEach((value, i) => {
+        const angle = angles[i]; const r = (value / 5) * radius;
+        const x = centerX + Math.cos(angle) * r; const y = centerY + Math.sin(angle) * r;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    
+    ctx.fillStyle = '#666666'; ctx.font = '14px Arial'; ctx.textAlign = 'center';
+    categories.forEach((category, i) => {
+        const angle = angles[i];
+        const x = centerX + Math.cos(angle) * (radius + 30); const y = centerY + Math.sin(angle) * (radius + 30);
+        ctx.fillText(category, x, y);
     });
 }
 
 async function shareToInstagram() {
     try {
         const imageDataUrl = await createComparisonImage();
-
-        // Convert to blob
         const response = await fetch(imageDataUrl);
         const blob = await response.blob();
-
         if (navigator.share) {
-            // Use Web Share API if available
             const file = new File([blob], 'cooking-analysis.png', { type: 'image/png' });
-            await navigator.share({
-                title: `${currentRecipe.title} - Cooking Analysis`,
-                text: `Check out my cooking analysis! ${currentAnalysis.feedback}`,
-                files: [file]
-            });
+            await navigator.share({ title: `${currentRecipe.title} - Cooking Analysis`, text: `Check out my cooking analysis! ${currentAnalysis.feedback}`, files: [file] });
         } else {
-            // Fallback: Open Instagram web
-            const text = encodeURIComponent(`Check out my cooking analysis for ${currentRecipe.title}! 🍳✨`);
             window.open(`https://www.instagram.com/`, '_blank');
-
-            // Also trigger download so user can manually upload
             downloadImage(imageDataUrl, 'cooking-analysis-instagram.png');
         }
     } catch (error) {
         console.error('Instagram sharing failed:', error);
-        alert('Instagram sharing not available. Image will be downloaded instead.');
+        alert('Sharing not available. Image will be downloaded instead.');
         downloadComparison();
     }
 }
 
 async function shareToTwitter() {
-    try {
-        const averageScore = Object.values(currentAnalysis.scores).reduce((a, b) => a + b, 0) / 5;
-        const scoreEmoji = averageScore >= 4 ? '🌟' : averageScore >= 3 ? '👍' : '💪';
-
-        const text = encodeURIComponent(
-            `Just cooked ${currentRecipe.title} and got analyzed by AI! ${scoreEmoji}\n` +
-            `Average score: ${averageScore.toFixed(1)}/5\n` +
-            `${currentAnalysis.feedback.substring(0, 100)}...\n` +
-            `#CookingWithAI #VisualCookingAssistant #FoodTech`
-        );
-
-        window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
-    } catch (error) {
-        console.error('Twitter sharing failed:', error);
-        alert('Twitter sharing failed. Please try again.');
-    }
+    const averageScore = Object.values(currentAnalysis.scores).reduce((a, b) => a + b, 0) / 5;
+    const scoreEmoji = averageScore >= 4 ? '🌟' : averageScore >= 3 ? '👍' : '💪';
+    const text = encodeURIComponent(`Just cooked ${currentRecipe.title} and got analyzed by AI! ${scoreEmoji}\nAverage score: ${averageScore.toFixed(1)}/5\n#CookingWithAI #VisualCookingAssistant`);
+    window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
 }
 
 async function shareToFacebook() {
-    try {
-        const text = encodeURIComponent(
-            `I just used the Visual Cooking Assistant to make ${currentRecipe.title}! ` +
-            `The AI gave me detailed feedback and scores. Check out this amazing cooking tool!`
-        );
-
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${text}`, '_blank');
-    } catch (error) {
-        console.error('Facebook sharing failed:', error);
-        alert('Facebook sharing failed. Please try again.');
-    }
+    const text = encodeURIComponent(`I just used the Visual Cooking Assistant to make ${currentRecipe.title}! The AI gave me detailed feedback and scores. Check out this amazing cooking tool!`);
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${text}`, '_blank');
 }
 
 async function saveToAlbum() {
     try {
         const imageDataUrl = await createComparisonImage();
-
-        // Use the File System Access API if available
-        if ('showSaveFilePicker' in window) {
-            const fileHandle = await window.showSaveFilePicker({
-                suggestedName: `${currentRecipe.title.replace(/\s+/g, '-')}-cooking-analysis.png`,
-                types: [{
-                    description: 'PNG Images',
-                    accept: { 'image/png': ['.png'] }
-                }]
-            });
-
-            const response = await fetch(imageDataUrl);
-            const blob = await response.blob();
-            const writable = await fileHandle.createWritable();
-            await writable.write(blob);
-            await writable.close();
-
-            alert('Image saved to your selected location!');
-        } else {
-            // Fallback: trigger download
-            downloadImage(imageDataUrl, `${currentRecipe.title.replace(/\s+/g, '-')}-cooking-analysis.png`);
-            alert('Image downloaded to your Downloads folder!');
-        }
+        downloadImage(imageDataUrl, `${currentRecipe.title.replace(/\s+/g, '-')}-cooking-analysis.png`);
+        alert('Image downloaded to your Downloads folder!');
     } catch (error) {
         console.error('Save to album failed:', error);
-        alert('Save failed. Image will be downloaded instead.');
-        downloadComparison();
+        alert('Save failed. Please try again.');
     }
 }
 
@@ -1241,7 +879,6 @@ async function downloadComparison() {
         downloadImage(imageDataUrl, `${currentRecipe.title.replace(/\s+/g, '-')}-comparison.png`);
     } catch (error) {
         console.error('Download failed:', error);
-        alert('Download failed. Please try again.');
     }
 }
 
@@ -1253,3 +890,35 @@ function downloadImage(dataUrl, filename) {
     link.click();
     document.body.removeChild(link);
 }
+
+// Time Estimation Function
+function estimateStepTime(instruction, stepTitle) {
+    const text = (instruction + " " + stepTitle).toLowerCase();
+    const timeRegex = /(\d+)\s*-\s*(\d+)\s*(minutes?|hours?)|(\d+)\s*(minutes?|hours?)/;
+    const match = text.match(timeRegex);
+    if (match) {
+        return match[0];
+    }
+    if (text.includes('bake') || text.includes('roast')) return '15-25 minutes';
+    if (text.includes('preheat') || text.includes('boil')) return '10-15 minutes';
+    if (text.includes('simmer') || text.includes('marinate')) return '30+ minutes';
+    if (text.includes('chop') || text.includes('slice') || text.includes('mix')) return '3-5 minutes';
+    return '5-10 minutes';
+}
+
+function createRealisticStepPlaceholder(title, instruction) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 256; canvas.height = 256;
+    const ctx = canvas.getContext('2d');
+    const gradient = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
+    gradient.addColorStop(0, '#f8f9fa');
+    gradient.addColorStop(1, '#dee2e6');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 256, 256);
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.font = '14px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(title, 128, 128);
+    return canvas.toDataURL();
+}
+

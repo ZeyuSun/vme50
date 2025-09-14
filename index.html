@@ -23,15 +23,6 @@
                 </div>
                 <input type="file" id="file-input" accept="image/*" hidden>
             </div>
-
-            <div class="sample-images">
-                <p>Try these samples:</p>
-                <div class="sample-grid">
-                    <img src="assets/samples/pizza.jpg" alt="Pizza" class="sample-img" data-recipe="pizza">
-                    <img src="assets/samples/coffee.jpg" alt="Coffee" class="sample-img" data-recipe="coffee">
-                    <img src="assets/samples/sandwich.jpg" alt="Sandwich" class="sample-img" data-recipe="sandwich">
-                </div>
-            </div>
         </div>
     </div>
 
@@ -44,6 +35,10 @@
             </div>
 
             <p class="instruction">Click on each step to hear instructions</p>
+
+            <div class="ingredients-display" id="ingredients-display">
+                <!-- Ingredients image will be dynamically generated here -->
+            </div>
 
             <div class="steps-grid" id="steps-grid">
                 <!-- Steps will be dynamically generated -->
@@ -70,15 +65,6 @@
                     <p class="small">Let's see how you did!</p>
                 </div>
                 <input type="file" id="result-file-input" accept="image/*" hidden>
-            </div>
-
-            <div class="sample-results">
-                <p>Or try these sample results:</p>
-                <div class="sample-grid">
-                    <img src="assets/results/pizza-good.jpg" alt="Good Pizza" class="sample-result" data-quality="good">
-                    <img src="assets/results/pizza-okay.jpg" alt="Okay Pizza" class="sample-result" data-quality="okay">
-                    <img src="assets/results/pizza-poor.jpg" alt="Poor Pizza" class="sample-result" data-quality="poor">
-                </div>
             </div>
         </div>
     </div>
